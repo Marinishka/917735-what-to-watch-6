@@ -1,14 +1,27 @@
 import React from 'react';
+import {UsePropTypes} from '../../const';
+import {Link} from 'react-router-dom';
 
-const MovieItem = () => {
+const MovieItem = ({film, handleFilmClick}) => {
+  const {previewImage, name, id} = film;
   return <article className="small-movie-card catalog__movies-card">
     <div className="small-movie-card__image">
-      <img src="img/fantastic-beasts-the-crimes-of-grindelwald.jpg" alt="Fantastic Beasts: The Crimes of Grindelwald" width="280" height="175" />
+      <img src={`${previewImage}`} alt={`${name}`} width="280" height="175" />
     </div>
     <h3 className="small-movie-card__title">
-      <a className="small-movie-card__link" href="movie-page.html">Fantastic Beasts: The Crimes of Grindelwald</a>
+      <Link className="small-movie-card__link" to={`/films/${id}`}
+        onClick={() => {
+          handleFilmClick(film);
+        }}>
+        {`${name}`}
+      </Link>
     </h3>
   </article>;
+};
+
+MovieItem.propTypes = {
+  film: UsePropTypes.FILM,
+  handleFilmClick: UsePropTypes.HANDLE
 };
 
 export default MovieItem;

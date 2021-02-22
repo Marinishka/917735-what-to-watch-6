@@ -1,18 +1,15 @@
 import React from 'react';
-import MovieItem from '../movie-item/movie-item.jsx';
-import {nanoid} from 'nanoid';
-import PropTypes from 'prop-types';
+import {useHistory} from 'react-router-dom';
+import {UsePropTypes, QuantityFilmsOnPage, Routes} from '../../const';
+import MoviesList from '../movies-list/movies-list.jsx';
 
-const Main = ({previewFilm}) => {
-  const {posterImg, backgroundImg, name, genre, released} = previewFilm;
-  const filmsId = [];
-  for (let i = 0; i < 20; i++) {
-    filmsId[i] = nanoid();
-  }
+const Main = ({previewFilm, films, handleFilmClick}) => {
+  const history = useHistory();
+  const {posterImage, backgroundImage, name, genre, released} = previewFilm;
   return <React.Fragment>
     <section className="movie-card">
       <div className="movie-card__bg">
-        <img src={backgroundImg} alt={name} />
+        <img src={backgroundImage} alt={name} />
       </div>
 
       <h1 className="visually-hidden">WTW</h1>
@@ -36,7 +33,7 @@ const Main = ({previewFilm}) => {
       <div className="movie-card__wrap">
         <div className="movie-card__info">
           <div className="movie-card__poster">
-            <img src={posterImg} alt={name} width="218" height="327" />
+            <img src={posterImage} alt={name} width="218" height="327" />
           </div>
 
           <div className="movie-card__desc">
@@ -47,10 +44,12 @@ const Main = ({previewFilm}) => {
             </p>
 
             <div className="movie-card__buttons">
-              <button className="btn btn--play movie-card__button" type="button"><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
-              </use>
-              </svg>
-              <span>Play</span>
+              <button className="btn btn--play movie-card__button" type="button" onClick={() => {
+                history.push(Routes.PLAYER);
+              }}><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
+                </use>
+                </svg>
+                <span>Play</span>
               </button>
               <button className="btn btn--list movie-card__button" type="button">
                 <svg viewBox="0 0 19 20" width="19" height="20">
@@ -101,9 +100,7 @@ const Main = ({previewFilm}) => {
           </li>
         </ul>
 
-        <div className="catalog__movies-list">
-          {filmsId.map((id) => <MovieItem key={id}/>)}
-        </div>
+        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MAIN}/>
 
         <div className="catalog__more">
           <button className="catalog__button" type="button">Show more</button>
@@ -128,13 +125,9 @@ const Main = ({previewFilm}) => {
 };
 
 Main.propTypes = {
-  previewFilm: PropTypes.shape({
-    posterImg: PropTypes.string.isRequired,
-    backgroundImg: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    genre: PropTypes.string.isRequired,
-    released: PropTypes.number.isRequired
-  })
+  previewFilm: UsePropTypes.PREVIEW_FILM,
+  films: UsePropTypes.FILMS,
+  handleFilmClick: UsePropTypes.HANDLE
 };
 
 export default Main;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Main from '../main/main';
 import AddReview from '../add-review/add-review';
 import SignIn from '../sign-in/sign-in';
@@ -6,30 +6,38 @@ import MyList from '../my-list/my-list';
 import MoviePage from '../movie-page/movie-page';
 import Player from '../player/player';
 import NotFound from '../not-found/not-found';
-import PropTypes from 'prop-types';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import {Routes, UsePropTypes} from '../../const';
 
-const App = ({previewFilm}) => {
+const App = ({previewFilm, films}) => {
+  let [activeFilm, setActiveFilm] = useState(previewFilm);
+
+  const handleFilmClick = (film) => {
+    setActiveFilm(film);
+  };
   return (
     <BrowserRouter>
       <Switch>
-        <Route path='/' exact>
-          <Main previewFilm = {previewFilm}/>
+        <Route path={Routes.MAIN} exact>
+          <Main
+            previewFilm = {previewFilm}
+            films = {films}
+            handleFilmClick={handleFilmClick}/>
         </Route>
-        <Route path='/login' exact>
+        <Route path={Routes.SIGN_IN} exact>
           <SignIn/>
         </Route>
-        <Route path='/mylist' exact>
-          <MyList/>
+        <Route path={Routes.MY_LIST} exact>
+          <MyList films={films} handleFilmClick={handleFilmClick}/>
         </Route>
-        <Route path='/films/:id?' exact>
-          <MoviePage/>
+        <Route path={Routes.MOVIE_PAGE} exact>
+          <MoviePage film={activeFilm} films={films} handleFilmClick={handleFilmClick}/>
         </Route>
-        <Route path='/films/:id/review' exact>
-          <AddReview/>
+        <Route path={Routes.ADD_REVIEW} exact>
+          <AddReview film={activeFilm} />
         </Route>
-        <Route path='/player/:id?' exact>
-          <Player/>
+        <Route path={Routes.PLAYER} exact>
+          <Player film={activeFilm}/>
         </Route>
         <Route>
           <NotFound/>
@@ -40,13 +48,8 @@ const App = ({previewFilm}) => {
 };
 
 App.propTypes = {
-  previewFilm: PropTypes.shape({
-    posterImg: PropTypes.string.isRequired,
-    backgroundImg: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    genre: PropTypes.string.isRequired,
-    released: PropTypes.number.isRequired
-  })
+  previewFilm: UsePropTypes.PREVIEW_FILM,
+  films: UsePropTypes.FILMS
 };
 
 export default App;
