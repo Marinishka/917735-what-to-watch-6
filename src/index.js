@@ -1,17 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app.jsx';
+import films from './mocks/films';
+
 const data = {
   previewFilm: {
-    posterImg: `img/the-grand-budapest-hotel-poster.jpg`,
-    backgroundImg: `img/bg-the-grand-budapest-hotel.jpg`,
+    id: 0,
+    posterImage: `img/the-grand-budapest-hotel-poster.jpg`,
+    backgroundImage: `img/bg-the-grand-budapest-hotel.jpg`,
+    previewImage: `img/bg-the-grand-budapest-hotel.jpg`,
+    backgroundColor: `#ffffff`,
     name: `The Grand Budapest Hotel`,
     genre: `Drama`,
-    released: 2014
+    released: 2014,
+    runTime: 108,
+    rating: 8.9,
+    scoresCount: 240,
+    videoLink: `https://upload.wikimedia.org/wikipedia/commons/d/d1/NASA%27s_Mars_2020_Perseverance_Rover_Landing_Animations-rzmd7RouGrM.webm`,
+    previewVideoLink: `https://upload.wikimedia.org/wikipedia/commons/d/d1/NASA%27s_Mars_2020_Perseverance_Rover_Landing_Animations-rzmd7RouGrM.webm`,
+    description: `In the 1930s, the Grand Budapest Hotel is a popular European ski resort, presided over by concierge Gustave H. (Ralph Fiennes). Zero, a junior lobby boy, becomes Gustave's friend and protege.`,
+    director: `Wes Andreson`,
+    starring: [`Bill Murray`, `Edward Norton`, `Jude Law`, `Willem Dafoe`],
+    isFavorite: true
   }
 };
 
 ReactDOM.render(
-    <App previewFilm = {data.previewFilm}/>,
+    <App previewFilm = {data.previewFilm}
+      films = {films}/>,
     document.querySelector(`#root`)
 );

@@ -1,16 +1,24 @@
 import React from 'react';
+import {UsePropTypes} from '../../const';
+import {useHistory} from 'react-router-dom';
 
-const Player = () => {
+const Player = ({film}) => {
+  const history = useHistory();
+  const {videoLink, posterImage, runTime} = film;
+  const hours = Math.trunc(runTime / 60);
+  const minutes = runTime % 60;
   return <div className="player">
-    <video src="#" className="player__video" poster="img/player-poster.jpg"></video>
-    <button type="button" className="player__exit">Exit</button>
+    <video src={videoLink} className="player__video" poster={posterImage}></video>
+    <button type="button" className="player__exit" onClick={() => {
+      history.goBack();
+    }}>Exit</button>
     <div className="player__controls">
       <div className="player__controls-row">
         <div className="player__time">
-          <progress className="player__progress" value="30" max="100"></progress>
-          <div className="player__toggler" style={{left: `30%`}}>Toggler</div>
+          <progress className="player__progress" value="0" max="100"></progress>
+          <div className="player__toggler" style={{left: `0%`}}>Toggler</div>
         </div>
-        <div className="player__time-value">1:30:29</div>
+        <div className="player__time-value">{hours}:{minutes}:00</div>
       </div>
 
       <div className="player__controls-row">
@@ -31,6 +39,10 @@ const Player = () => {
       </div>
     </div>
   </div>;
+};
+
+Player.propTypes = {
+  film: UsePropTypes.FILM
 };
 
 export default Player;
