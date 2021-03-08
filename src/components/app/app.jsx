@@ -7,13 +7,17 @@ import MoviePage from '../movie-page/movie-page';
 import Player from '../player/player';
 import NotFound from '../not-found/not-found';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
-import {Routes, UsePropTypes} from '../../const';
+import {Routes, PROP_TYPES_PREVIEW_FILM, PROP_TYPES_FILMS} from '../../const';
 
 const App = ({previewFilm, films}) => {
   let [activeFilm, setActiveFilm] = useState(previewFilm);
+  let [activePreviewFilmId, setActivePreviewFilmId] = useState(previewFilm.id);
 
   const handleFilmClick = (film) => {
     setActiveFilm(film);
+  };
+  const handleFilmMouseIn = (id) => {
+    setActivePreviewFilmId(id);
   };
   return (
     <BrowserRouter>
@@ -22,7 +26,9 @@ const App = ({previewFilm, films}) => {
           <Main
             previewFilm = {previewFilm}
             films = {films}
-            handleFilmClick={handleFilmClick}/>
+            handleFilmClick={handleFilmClick}
+            handleFilmMouseIn={handleFilmMouseIn}
+            activePreviewFilmId={activePreviewFilmId}/>
         </Route>
         <Route path={Routes.SIGN_IN} exact>
           <SignIn/>
@@ -31,7 +37,11 @@ const App = ({previewFilm, films}) => {
           <MyList films={films} handleFilmClick={handleFilmClick}/>
         </Route>
         <Route path={Routes.MOVIE_PAGE} exact>
-          <MoviePage film={activeFilm} films={films} handleFilmClick={handleFilmClick}/>
+          <MoviePage film={activeFilm}
+            films={films}
+            handleFilmClick={handleFilmClick}
+            handleFilmMouseIn={handleFilmMouseIn}
+            activePreviewFilmId={activePreviewFilmId}/>
         </Route>
         <Route path={Routes.ADD_REVIEW} exact>
           <AddReview film={activeFilm} />
@@ -48,8 +58,8 @@ const App = ({previewFilm, films}) => {
 };
 
 App.propTypes = {
-  previewFilm: UsePropTypes.PREVIEW_FILM,
-  films: UsePropTypes.FILMS
+  previewFilm: PROP_TYPES_PREVIEW_FILM,
+  films: PROP_TYPES_FILMS
 };
 
 export default App;

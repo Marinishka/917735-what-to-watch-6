@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, UsePropTypes} from '../../const';
+import {Routes, PROP_TYPES_FILMS} from '../../const';
 import MoviesList from '../movies-list/movies-list';
+import PropTypes from 'prop-types';
 
 const MyList = ({films, handleFilmClick}) => {
 
@@ -46,8 +47,8 @@ const MyList = ({films, handleFilmClick}) => {
 };
 
 MyList.propTypes = {
-  films: UsePropTypes.FILMS,
-  handleFilmClick: UsePropTypes.HANDLE
+  films: PROP_TYPES_FILMS,
+  handleFilmClick: PropTypes.func.isRequired
 };
 
 export default MyList;

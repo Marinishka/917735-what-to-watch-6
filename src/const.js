@@ -38,52 +38,30 @@ export const QuantityFilmsOnPage = {
   MOVIE_PAGE: 4
 };
 
-export const UsePropTypes = {
-  FILM: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    posterImage: PropTypes.string.isRequired,
-    previewImage: PropTypes.string.isRequired,
-    backgroundImage: PropTypes.string.isRequired,
-    backgroundColor: PropTypes.string.isRequired,
-    videoLink: PropTypes.string.isRequired,
-    previewVideoLink: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired,
-    scoresCount: PropTypes.number.isRequired,
-    director: PropTypes.string.isRequired,
-    starring: PropTypes.arrayOf(PropTypes.string.isRequired),
-    runTime: PropTypes.number.isRequired,
-    genre: PropTypes.string.isRequired,
-    released: PropTypes.number.isRequired,
-    isFavorite: PropTypes.bool.isRequired
-  }).isRequired,
-  FILMS: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    posterImage: PropTypes.string.isRequired,
-    previewImage: PropTypes.string.isRequired,
-    backgroundImage: PropTypes.string.isRequired,
-    backgroundColor: PropTypes.string.isRequired,
-    videoLink: PropTypes.string.isRequired,
-    previewVideoLink: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    rating: PropTypes.number.isRequired,
-    scoresCount: PropTypes.number.isRequired,
-    director: PropTypes.string.isRequired,
-    starring: PropTypes.arrayOf(PropTypes.string.isRequired),
-    runTime: PropTypes.number.isRequired,
-    genre: PropTypes.string.isRequired,
-    released: PropTypes.number.isRequired,
-    isFavorite: PropTypes.bool.isRequired
-  }).isRequired),
-  PREVIEW_FILM: PropTypes.shape({
-    posterImage: PropTypes.string.isRequired,
-    backgroundImage: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    genre: PropTypes.string.isRequired,
-    released: PropTypes.number.isRequired
-  }),
-  HANDLE: PropTypes.func.isRequired,
-  QUANTITY: PropTypes.number.isRequired
-};
+export const PROP_TYPES_FILM = PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  posterImage: PropTypes.string.isRequired,
+  previewImage: PropTypes.string.isRequired,
+  backgroundImage: PropTypes.string.isRequired,
+  backgroundColor: PropTypes.string.isRequired,
+  videoLink: PropTypes.string.isRequired,
+  previewVideoLink: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  rating: PropTypes.number.isRequired,
+  scoresCount: PropTypes.number.isRequired,
+  director: PropTypes.string.isRequired,
+  starring: PropTypes.arrayOf(PropTypes.string.isRequired),
+  runTime: PropTypes.number.isRequired,
+  genre: PropTypes.string.isRequired,
+  released: PropTypes.number.isRequired,
+  isFavorite: PropTypes.bool.isRequired
+}).isRequired;
+export const PROP_TYPES_FILMS = PropTypes.arrayOf(PROP_TYPES_FILM);
+export const PROP_TYPES_PREVIEW_FILM = PropTypes.shape({
+  posterImage: PropTypes.string.isRequired,
+  backgroundImage: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  genre: PropTypes.string.isRequired,
+  released: PropTypes.number.isRequired
+});

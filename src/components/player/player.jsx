@@ -1,36 +1,74 @@
-import React from 'react';
-import {UsePropTypes} from '../../const';
+import React, {useState, useRef} from 'react';
+import {PROP_TYPES_FILM} from '../../const';
 import {useHistory} from 'react-router-dom';
+import VideoPlayer from '../video-player/video-player';
+
+const UNIT_OF_TIME = 60;
 
 const Player = ({film}) => {
+  const {videoLink, posterImage, runTime, name} = film;
+
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [fullDuration, setFullDuration] = useState(runTime);
   const history = useHistory();
-  const {videoLink, posterImage, runTime} = film;
-  const hours = Math.trunc(runTime / 60);
-  const minutes = runTime % 60;
-  return <div className="player">
-    <video src={videoLink} className="player__video" poster={posterImage}></video>
+  const playerRef = useRef();
+
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+  let durationElapsed = 0;
+
+  const updateCurrentTime = (time) => {
+    setCurrentTime(time);
+  };
+
+  const getPercentDuration = () => {
+    return Math.floor((100 / fullDuration) * currentTime);
+  };
+
+  const getTimeElapsed = () => {
+    durationElapsed = fullDuration - currentTime;
+    hours = Math.floor(durationElapsed / UNIT_OF_TIME / UNIT_OF_TIME);
+    minutes = Math.floor(durationElapsed / UNIT_OF_TIME) - (hours * UNIT_OF_TIME);
+    seconds = Math.floor(durationElapsed % UNIT_OF_TIME);
+    return `${hours.toString().padStart(2, `0`)}:${minutes.toString().padStart(2, `0`)}:${seconds.toString().padStart(2, `0`)}`;
+  };
+
+  const handleFullScreenChange = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      playerRef.current.requestFullscreen();
+    }
+  };
+
+  return <div className="player" ref={playerRef}>
+    <VideoPlayer isMuted={false} isPlaying={isPlaying} src={videoLink} posterImage={posterImage} name={name} defaultCurrentTime={currentTime} updateCurrentTime={updateCurrentTime} setFullDuration={setFullDuration}/>
     <button type="button" className="player__exit" onClick={() => {
       history.goBack();
     }}>Exit</button>
     <div className="player__controls">
       <div className="player__controls-row">
         <div className="player__time">
-          <progress className="player__progress" value="0" max="100"></progress>
-          <div className="player__toggler" style={{left: `0%`}}>Toggler</div>
+          <progress className="player__progress" value={getPercentDuration()} max="100"></progress>
+          <div className="player__toggler" style={{left: `${getPercentDuration()}%`}}>Toggler</div>
         </div>
-        <div className="player__time-value">{hours}:{minutes}:00</div>
+        <div className="player__time-value">{getTimeElapsed()}</div>
       </div>
 
       <div className="player__controls-row">
-        <button type="button" className="player__play">
+        <button type="button" className="player__play" onClick={() => {
+          setIsPlaying((prevIsPlayng) => !prevIsPlayng);
+        }}>
           <svg viewBox="0 0 19 19" width="19" height="19">
-            <use xlinkHref="#play-s"></use>
+            <use xlinkHref={isPlaying ? `#pause` : `#play-s`}></use>
           </svg>
           <span>Play</span>
         </button>
         <div className="player__name">Transpotting</div>
 
-        <button type="button" className="player__full-screen">
+        <button type="button" className="player__full-screen" onClick={() => handleFullScreenChange()}>
           <svg viewBox="0 0 27 27" width="27" height="27">
             <use xlinkHref="#full-screen"></use>
           </svg>
@@ -42,7 +80,7 @@ const Player = ({film}) => {
 };
 
 Player.propTypes = {
-  film: UsePropTypes.FILM
+  film: PROP_TYPES_FILM
 };
 
 export default Player;
