@@ -1,15 +1,15 @@
 import React, {Fragment, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, UsePropTypes} from '../../const';
+import {Routes, PROP_TYPES_FILM} from '../../const';
 
 const STARS_QUANTITY = 10;
 const StartState = {
-  STAR_RAITING: 0,
+  STAR_RATING: 0,
   REVIEW_TEXT: ``
 };
 
 const AddReview = ({film}) => {
-  const [, setStarRaitung] = useState(StartState.STAR_RAITING);
+  const [, setStarRating] = useState(StartState.STAR_RATING);
   const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
   const {name, posterImage, backgroundImage} = film;
   return <section className="movie-card movie-card--full">
@@ -63,7 +63,7 @@ const AddReview = ({film}) => {
               return (
                 <Fragment key={starNumber}>
                   <input className="rating__input" id={`star-${starNumber}`} type="radio" name="rating" value={starNumber} onChange={({target}) => {
-                    setStarRaitung(target.value);
+                    setStarRating(target.value);
                   }}/>
                   <label className="rating__label" htmlFor={`star-${starNumber}`}>Rating {starNumber}</label>
                 </Fragment>
@@ -75,7 +75,7 @@ const AddReview = ({film}) => {
         <div className="add-review__text">
           <textarea className="add-review__textarea" name="review-text" id="review-text" placeholder="Review text" value={reviewText} onChange={({target}) => {
             setReviewText(target.value);
-          }}></textarea>
+          }}/>
           <div className="add-review__submit">
             <button className="add-review__btn" type="submit">Post</button>
           </div>
@@ -88,7 +88,7 @@ const AddReview = ({film}) => {
 };
 
 AddReview.propTypes = {
-  film: UsePropTypes.FILM
+  film: PROP_TYPES_FILM
 };
 
 export default AddReview;

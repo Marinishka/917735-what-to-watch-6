@@ -1,11 +1,12 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import {UsePropTypes, QuantityFilmsOnPage, Routes} from '../../const';
+import {PROP_TYPES_FILMS, PROP_TYPES_PREVIEW_FILM, QuantityFilmsOnPage} from '../../const';
+import PropTypes from 'prop-types';
 import MoviesList from '../movies-list/movies-list.jsx';
 
-const Main = ({previewFilm, films, handleFilmClick}) => {
+const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
   const history = useHistory();
-  const {posterImage, backgroundImage, name, genre, released} = previewFilm;
+  const {posterImage, backgroundImage, name, genre, released, id} = previewFilm;
   return <React.Fragment>
     <section className="movie-card">
       <div className="movie-card__bg">
@@ -45,7 +46,7 @@ const Main = ({previewFilm, films, handleFilmClick}) => {
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                history.push(Routes.PLAYER);
+                history.push(`/player/${id}`);
               }}><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
                 </use>
                 </svg>
@@ -100,7 +101,7 @@ const Main = ({previewFilm, films, handleFilmClick}) => {
           </li>
         </ul>
 
-        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MAIN}/>
+        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MAIN} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
 
         <div className="catalog__more">
           <button className="catalog__button" type="button">Show more</button>
@@ -125,9 +126,13 @@ const Main = ({previewFilm, films, handleFilmClick}) => {
 };
 
 Main.propTypes = {
-  previewFilm: UsePropTypes.PREVIEW_FILM,
-  films: UsePropTypes.FILMS,
-  handleFilmClick: UsePropTypes.HANDLE
+  previewFilm: PROP_TYPES_PREVIEW_FILM,
+  films: PROP_TYPES_FILMS,
+  handleFilmClick: PropTypes.func.isRequired,
+  handleFilmMouseIn: PropTypes.func.isRequired,
+  activePreviewFilmId: PropTypes.oneOfType([
+    PropTypes.oneOf([`null`]), PropTypes.number
+  ])
 };
 
 export default Main;

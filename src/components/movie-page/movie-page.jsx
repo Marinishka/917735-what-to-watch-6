@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link, useHistory} from 'react-router-dom';
-import {Routes, RatingLevels, UsePropTypes, QuantityFilmsOnPage} from '../../const';
+import {Routes, RatingLevels, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
 import MoviesList from '../movies-list/movies-list';
+import PropTypes from 'prop-types';
 
 const getRaitingText = (rating) => {
   const raitingLevel = RatingLevels.filter((level) => {
@@ -10,7 +11,7 @@ const getRaitingText = (rating) => {
   return raitingLevel.TEXT;
 };
 
-const MoviePage = ({film, films, handleFilmClick}) => {
+const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
   const {backgroundImage,
     name,
     genre,
@@ -20,7 +21,8 @@ const MoviePage = ({film, films, handleFilmClick}) => {
     scoresCount,
     director,
     starring,
-    description} = film;
+    description,
+    id} = film;
   const history = useHistory();
   return <React.Fragment>
     <section className="movie-card movie-card--full">
@@ -57,7 +59,7 @@ const MoviePage = ({film, films, handleFilmClick}) => {
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                history.push(Routes.PLAYER);
+                history.push(`/player/${id}`);
               }}>
                 <svg viewBox="0 0 19 19" width="19" height="19">
                   <use xlinkHref="#play-s"></use>
@@ -70,7 +72,7 @@ const MoviePage = ({film, films, handleFilmClick}) => {
                 </svg>
                 <span>My list</span>
               </button>
-              <Link to={Routes.ADD_REVIEW} className="btn movie-card__button">Add review</Link>
+              <Link to={`/films/${id}/review`} className="btn movie-card__button">Add review</Link>
             </div>
           </div>
         </div>
@@ -121,7 +123,7 @@ const MoviePage = ({film, films, handleFilmClick}) => {
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
+        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
       </section>
 
       <footer className="page-footer">
@@ -142,9 +144,13 @@ const MoviePage = ({film, films, handleFilmClick}) => {
 };
 
 MoviePage.propTypes = {
-  film: UsePropTypes.FILM,
-  films: UsePropTypes.FILMS,
-  handleFilmClick: UsePropTypes.HANDLE
+  film: PROP_TYPES_FILM,
+  films: PROP_TYPES_FILMS,
+  handleFilmClick: PropTypes.func.isRequired,
+  handleFilmMouseIn: PropTypes.func.isRequired,
+  activePreviewFilmId: PropTypes.oneOfType([
+    PropTypes.oneOf([`null`]), PropTypes.number
+  ])
 };
 
 export default MoviePage;

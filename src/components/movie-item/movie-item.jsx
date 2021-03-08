@@ -1,12 +1,27 @@
 import React from 'react';
-import {UsePropTypes} from '../../const';
+import {PROP_TYPES_FILM} from '../../const';
 import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import VideoPlayer from '../video-player/video-player';
 
-const MovieItem = ({film, handleFilmClick}) => {
-  const {previewImage, name, id} = film;
-  return <article className="small-movie-card catalog__movies-card">
+const MovieItem = ({film, handleFilmClick, isPlaying, handleFilmMouseIn}) => {
+  const {previewVideoLink, name, id, previewImage} = film;
+
+  let timerId;
+  let srcVideo = () => {
+    return isPlaying ? previewVideoLink : ``;
+  };
+
+  return <article className="small-movie-card catalog__movies-card"
+    onMouseOver={() => {
+      timerId = setTimeout(handleFilmMouseIn, 1000, id);
+    }}
+    onMouseLeave={() => {
+      clearInterval(timerId);
+      handleFilmMouseIn(null);
+    }}>
     <div className="small-movie-card__image">
-      <img src={`${previewImage}`} alt={`${name}`} width="280" height="175" />
+      <VideoPlayer isMuted={true} isPlaying={isPlaying} src={srcVideo()} posterImage={previewImage} name={name}/>
     </div>
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
@@ -20,8 +35,10 @@ const MovieItem = ({film, handleFilmClick}) => {
 };
 
 MovieItem.propTypes = {
-  film: UsePropTypes.FILM,
-  handleFilmClick: UsePropTypes.HANDLE
+  film: PROP_TYPES_FILM,
+  handleFilmClick: PropTypes.func.isRequired,
+  handleFilmMouseIn: PropTypes.func.isRequired,
+  isPlaying: PropTypes.bool.isRequired
 };
 
 export default MovieItem;
