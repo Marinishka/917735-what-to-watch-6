@@ -8,7 +8,7 @@ const MovieItem = ({film, handleFilmClick, isPlaying, handleFilmMouseIn}) => {
   const {previewVideoLink, name, id, previewImage} = film;
 
   let timerId;
-  let srcVideo = () => {
+  const srcVideo = () => {
     return isPlaying ? previewVideoLink : ``;
   };
 

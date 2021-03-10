@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 
+export const INITIAL_GENRE = `All genres`;
+
 export const Routes = {
   MAIN: `/`,
   SIGN_IN: `/login`,

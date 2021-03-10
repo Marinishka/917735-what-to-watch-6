@@ -123,7 +123,7 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
+        <MoviesList films={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
       </section>
 
       <footer className="page-footer">
