@@ -1,4 +1,4 @@
-import { INITIAL_GENRE } from "../const";
+import {INITIAL_GENRE} from "../const";
 
 export const ActionType = {
   CHANGE_GENRE: `genre/change`,
