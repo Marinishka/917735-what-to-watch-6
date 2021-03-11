@@ -30,8 +30,9 @@ MoviesList.propTypes = {
   ])
 };
 
-const mapStateToProps = (state) => ({
-  activeGenre: state.activeGenre
+const mapStateToProps = ({activeGenre, films}) => ({
+  activeGenre,
+  films
 });
 
 export {MoviesList};

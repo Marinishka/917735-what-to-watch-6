@@ -4,6 +4,7 @@ import {PROP_TYPES_FILMS, PROP_TYPES_PREVIEW_FILM, QuantityFilmsOnPage} from '..
 import PropTypes from 'prop-types';
 import MoviesList from '../movies-list/movies-list.jsx';
 import GenresList from '../genres-list/genres-list';
+import {connect} from 'react-redux';
 
 const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
   const history = useHistory();
@@ -105,4 +106,10 @@ Main.propTypes = {
   ])
 };
 
-export default Main;
+export {Main};
+
+const mapStateToProps = ({films}) => ({
+  films
+});
+
+export default connect(mapStateToProps)(Main);

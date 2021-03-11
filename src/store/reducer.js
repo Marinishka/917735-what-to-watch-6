@@ -1,10 +1,12 @@
 import {INITIAL_GENRE} from "../const";
 import films from "../mocks/films";
+import {getAllGenres} from "../utils/common";
 import {ActionType} from "./action";
 
 const initialState = {
   activeGenre: INITIAL_GENRE,
-  films
+  films,
+  allGenres: getAllGenres(films)
 };
 
 const reducer = (state = initialState, action) => {

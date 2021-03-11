@@ -3,6 +3,7 @@ import {Link, useHistory} from 'react-router-dom';
 import {Routes, RatingLevels, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
 const getRaitingText = (rating) => {
   const raitingLevel = RatingLevels.filter((level) => {
@@ -153,4 +154,10 @@ MoviePage.propTypes = {
   ])
 };
 
-export default MoviePage;
+const mapStateToProps = ({films}) => ({
+  films
+});
+
+export {MoviePage};
+
+export default connect(mapStateToProps)(MoviePage);
