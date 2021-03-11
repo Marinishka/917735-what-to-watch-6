@@ -1,16 +1,10 @@
 import React from 'react';
 import {Link, useHistory} from 'react-router-dom';
-import {Routes, RatingLevels, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
+import {Routes, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-
-const getRaitingText = (rating) => {
-  const raitingLevel = RatingLevels.filter((level) => {
-    return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
-  });
-  return raitingLevel.TEXT;
-};
+import {getRaitingText} from '../../utils/common';
 
 const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
   const {backgroundImage,

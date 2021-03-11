@@ -4,7 +4,7 @@ import {Routes, PROP_TYPES_FILMS} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import PropTypes from 'prop-types';
 
-const MyList = ({films, handleFilmClick}) => {
+const MyList = ({films, handleFilmClick, activePreviewFilmId, handleFilmMouseIn}) => {
 
   return <div className="user-page">
     <header className="page-header user-page__head">
@@ -27,7 +27,7 @@ const MyList = ({films, handleFilmClick}) => {
 
     <section className="catalog">
       <h2 className="catalog__title visually-hidden">Catalog</h2>
-      <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={films.length}/>
+      <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={films.length} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
     </section>
 
     <footer className="page-footer">
@@ -48,7 +48,11 @@ const MyList = ({films, handleFilmClick}) => {
 
 MyList.propTypes = {
   films: PROP_TYPES_FILMS,
-  handleFilmClick: PropTypes.func.isRequired
+  handleFilmClick: PropTypes.func.isRequired,
+  handleFilmMouseIn: PropTypes.func.isRequired,
+  activePreviewFilmId: PropTypes.oneOfType([
+    PropTypes.oneOf([`null`]), PropTypes.number
+  ])
 };
 
 export default MyList;

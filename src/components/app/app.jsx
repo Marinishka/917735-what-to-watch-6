@@ -34,7 +34,9 @@ const App = ({previewFilm, films}) => {
           <SignIn/>
         </Route>
         <Route path={Routes.MY_LIST} exact>
-          <MyList films={films} handleFilmClick={handleFilmClick}/>
+          <MyList films={films} handleFilmClick={handleFilmClick}
+            handleFilmMouseIn={handleFilmMouseIn}
+            activePreviewFilmId={activePreviewFilmId}/>
         </Route>
         <Route path={Routes.MOVIE_PAGE} exact>
           <MoviePage film={activeFilm}

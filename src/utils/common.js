@@ -1,4 +1,4 @@
-import {INITIAL_GENRE} from "../const";
+import {INITIAL_GENRE, RatingLevels} from "../const";
 
 export const getAllGenres = (films) => {
   const genres = new Set();
@@ -13,4 +13,11 @@ export const getFilteredFilms = (genre, films) => {
     return films.filter((film) => film.genre === genre);
   }
   return films;
+};
+
+export const getRaitingText = (rating) => {
+  const raitingLevel = RatingLevels.filter((level) => {
+    return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
+  });
+  return raitingLevel.TEXT;
 };
