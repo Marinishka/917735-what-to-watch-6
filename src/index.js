@@ -1,7 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app.jsx';
-import films from './mocks/films';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
+import {reducer} from './store/reducer';
+import {composeWithDevTools} from 'redux-devtools-extension';
+
+const store = createStore(reducer, composeWithDevTools());
 
 const data = {
   previewFilm: {
@@ -26,7 +31,8 @@ const data = {
 };
 
 ReactDOM.render(
-    <App previewFilm = {data.previewFilm}
-      films = {films}/>,
+    <Provider store={store}>
+      <App previewFilm = {data.previewFilm}/>
+    </Provider>,
     document.querySelector(`#root`)
 );

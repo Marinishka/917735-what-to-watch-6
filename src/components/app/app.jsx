@@ -8,6 +8,7 @@ import Player from '../player/player';
 import NotFound from '../not-found/not-found';
 import {Switch, Route, BrowserRouter} from 'react-router-dom';
 import {Routes, PROP_TYPES_PREVIEW_FILM, PROP_TYPES_FILMS} from '../../const';
+import {connect} from 'react-redux';
 
 const App = ({previewFilm, films}) => {
   let [activeFilm, setActiveFilm] = useState(previewFilm);
@@ -25,7 +26,6 @@ const App = ({previewFilm, films}) => {
         <Route path={Routes.MAIN} exact>
           <Main
             previewFilm = {previewFilm}
-            films = {films}
             handleFilmClick={handleFilmClick}
             handleFilmMouseIn={handleFilmMouseIn}
             activePreviewFilmId={activePreviewFilmId}/>
@@ -34,11 +34,12 @@ const App = ({previewFilm, films}) => {
           <SignIn/>
         </Route>
         <Route path={Routes.MY_LIST} exact>
-          <MyList films={films} handleFilmClick={handleFilmClick}/>
+          <MyList films={films} handleFilmClick={handleFilmClick}
+            handleFilmMouseIn={handleFilmMouseIn}
+            activePreviewFilmId={activePreviewFilmId}/>
         </Route>
         <Route path={Routes.MOVIE_PAGE} exact>
           <MoviePage film={activeFilm}
-            films={films}
             handleFilmClick={handleFilmClick}
             handleFilmMouseIn={handleFilmMouseIn}
             activePreviewFilmId={activePreviewFilmId}/>
@@ -62,4 +63,10 @@ App.propTypes = {
   films: PROP_TYPES_FILMS
 };
 
-export default App;
+const mapStateToProps = ({films}) => ({
+  films
+});
+
+export {App};
+
+export default connect(mapStateToProps)(App);

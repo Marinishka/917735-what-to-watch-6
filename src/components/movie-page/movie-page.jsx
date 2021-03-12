@@ -1,15 +1,10 @@
 import React from 'react';
 import {Link, useHistory} from 'react-router-dom';
-import {Routes, RatingLevels, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
+import {Routes, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import PropTypes from 'prop-types';
-
-const getRaitingText = (rating) => {
-  const raitingLevel = RatingLevels.filter((level) => {
-    return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
-  });
-  return raitingLevel.TEXT;
-};
+import {connect} from 'react-redux';
+import {getRaitingText} from '../../utils/common';
 
 const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
   const {backgroundImage,
@@ -123,7 +118,7 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList data={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
+        <MoviesList films={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
       </section>
 
       <footer className="page-footer">
@@ -153,4 +148,10 @@ MoviePage.propTypes = {
   ])
 };
 
-export default MoviePage;
+const mapStateToProps = ({films}) => ({
+  films
+});
+
+export {MoviePage};
+
+export default connect(mapStateToProps)(MoviePage);
