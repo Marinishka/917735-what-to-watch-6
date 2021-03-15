@@ -1,6 +1,7 @@
 import React, {Fragment, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {Routes, PROP_TYPES_FILM} from '../../const';
+import {connect} from 'react-redux';
 
 const STARS_QUANTITY = 10;
 const StartState = {
@@ -8,10 +9,10 @@ const StartState = {
   REVIEW_TEXT: ``
 };
 
-const AddReview = ({film}) => {
+const AddReview = ({activeFilm}) => {
   const [, setStarRating] = useState(StartState.STAR_RATING);
   const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
-  const {name, posterImage, backgroundImage} = film;
+  const {name, posterImage, backgroundImage} = activeFilm;
   return <section className="movie-card movie-card--full">
     <div className="movie-card__header">
       <div className="movie-card__bg">
@@ -88,7 +89,13 @@ const AddReview = ({film}) => {
 };
 
 AddReview.propTypes = {
-  film: PROP_TYPES_FILM
+  activeFilm: PROP_TYPES_FILM
 };
 
-export default AddReview;
+const mapStateToProps = ({activeFilm}) => ({
+  activeFilm
+});
+
+export {AddReview};
+
+export default connect(mapStateToProps)(AddReview);

@@ -1,11 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {PROP_TYPES_FILMS} from '../../const.js';
 import MovieItem from '../movie-item/movie-item.jsx';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {getFilteredFilms} from '../../utils/common.js';
 
-const MoviesList = ({films, handleFilmClick, quantity, handleFilmMouseIn, activePreviewFilmId, activeGenre}) => {
+const MoviesList = ({films, quantity, activeGenre}) => {
+  const [activePreviewFilmId, setActivePreviewFilmId] = useState(null);
+
+  const handleFilmMouseIn = (id) => {
+    setActivePreviewFilmId(id);
+  };
+
   const isFilmPreviewPlay = (filmId) => {
     return filmId === activePreviewFilmId;
   };
@@ -14,20 +20,15 @@ const MoviesList = ({films, handleFilmClick, quantity, handleFilmMouseIn, active
 
   return <div className="catalog__movies-list" >
     {filteredFilms.slice(0, quantity).map((film) => {
-      return <MovieItem key={film.id} film={film} handleFilmClick={handleFilmClick} handleFilmMouseIn={handleFilmMouseIn} isPlaying={isFilmPreviewPlay(film.id)}/>;
+      return <MovieItem key={film.id} film={film} handleFilmMouseIn={handleFilmMouseIn} isPlaying={isFilmPreviewPlay(film.id)}/>;
     })}
   </div>;
 };
 
 MoviesList.propTypes = {
   films: PROP_TYPES_FILMS,
-  handleFilmClick: PropTypes.func.isRequired,
   quantity: PropTypes.number.isRequired,
-  handleFilmMouseIn: PropTypes.func.isRequired,
-  activeGenre: PropTypes.string.isRequired,
-  activePreviewFilmId: PropTypes.oneOfType([
-    PropTypes.oneOf([`null`]), PropTypes.number
-  ])
+  activeGenre: PropTypes.string.isRequired
 };
 
 const mapStateToProps = ({activeGenre, films}) => ({

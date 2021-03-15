@@ -1,24 +1,19 @@
 import React from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Routes, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
 import MoviesList from '../movies-list/movies-list';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {getRaitingText} from '../../utils/common';
+import Tabs from '../tabs/tabs';
+import PropTypes from 'prop-types';
 
-const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
+const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
   const {backgroundImage,
     name,
     genre,
     released,
     posterImage,
-    rating,
-    scoresCount,
-    director,
-    starring,
-    description,
-    id} = film;
-  const history = useHistory();
+    id} = activeFilm;
+
   return <React.Fragment>
     <section className="movie-card movie-card--full">
       <div className="movie-card__hero">
@@ -54,7 +49,7 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                history.push(`/player/${id}`);
+                onButtonPlayerClick(`/player/${id}`);
               }}>
                 <svg viewBox="0 0 19 19" width="19" height="19">
                   <use xlinkHref="#play-s"></use>
@@ -79,37 +74,7 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
             <img src={posterImage} alt={`${name} poster`} width="218" height="327" />
           </div>
 
-          <div className="movie-card__desc">
-            <nav className="movie-nav movie-card__nav">
-              <ul className="movie-nav__list">
-                <li className="movie-nav__item movie-nav__item--active">
-                  <a href="#" className="movie-nav__link">Overview</a>
-                </li>
-                <li className="movie-nav__item">
-                  <a href="#" className="movie-nav__link">Details</a>
-                </li>
-                <li className="movie-nav__item">
-                  <a href="#" className="movie-nav__link">Reviews</a>
-                </li>
-              </ul>
-            </nav>
-
-            <div className="movie-rating">
-              <div className="movie-rating__score">{rating}</div>
-              <p className="movie-rating__meta">
-                <span className="movie-rating__level">{getRaitingText(rating)}</span>
-                <span className="movie-rating__count">{scoresCount} ratings</span>
-              </p>
-            </div>
-
-            <div className="movie-card__text">
-              <p>{description}</p>
-
-              <p className="movie-card__director"><strong>Director: {director}</strong></p>
-
-              <p className="movie-card__starring"><strong>Starring: {starring.join(`, `)}</strong></p>
-            </div>
-          </div>
+          <Tabs film={activeFilm}></Tabs>
         </div>
       </div>
     </section>
@@ -118,7 +83,7 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList films={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MOVIE_PAGE} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
+        <MoviesList films={films} quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
       </section>
 
       <footer className="page-footer">
@@ -139,17 +104,14 @@ const MoviePage = ({film, films, handleFilmClick, handleFilmMouseIn, activePrevi
 };
 
 MoviePage.propTypes = {
-  film: PROP_TYPES_FILM,
+  activeFilm: PROP_TYPES_FILM,
   films: PROP_TYPES_FILMS,
-  handleFilmClick: PropTypes.func.isRequired,
-  handleFilmMouseIn: PropTypes.func.isRequired,
-  activePreviewFilmId: PropTypes.oneOfType([
-    PropTypes.oneOf([`null`]), PropTypes.number
-  ])
+  onButtonPlayerClick: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({films}) => ({
-  films
+const mapStateToProps = ({films, activeFilm}) => ({
+  films,
+  activeFilm
 });
 
 export {MoviePage};
