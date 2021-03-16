@@ -8,7 +8,7 @@ import Player from '../player/player';
 import NotFound from '../not-found/not-found';
 import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import {Routes} from '../../const';
-import {PrivateRoute} from '../private-route/private-route';
+import PrivateRoute from '../private-route/private-route';
 import browserHistory from '../../browser-history';
 
 const App = () => {

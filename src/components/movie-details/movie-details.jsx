@@ -1,10 +1,9 @@
 import React from 'react';
-import {PROP_TYPES_FILM, UNIT_OF_TIME} from '../../const';
+import {PROP_TYPES_FILM} from '../../const';
+import {getTimeInHourAndMinutes} from '../../utils/common';
 
 const MovieDetails = ({film}) => {
   const {released, genre, director, starring, runTime} = film;
-  const hours = Math.floor(runTime / UNIT_OF_TIME);
-  const minutes = runTime - (hours * UNIT_OF_TIME);
 
   return <div className="movie-card__text movie-card__row">
     <div className="movie-card__text-col">
@@ -26,7 +25,7 @@ const MovieDetails = ({film}) => {
     <div className="movie-card__text-col">
       <p className="movie-card__details-item">
         <strong className="movie-card__details-name">Run Time</strong>
-        <span className="movie-card__details-value">{hours}h {minutes}m</span>
+        <span className="movie-card__details-value">{getTimeInHourAndMinutes(runTime)}</span>
       </p>
       <p className="movie-card__details-item">
         <strong className="movie-card__details-name">Genre</strong>

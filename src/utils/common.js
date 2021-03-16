@@ -1,4 +1,4 @@
-import {INITIAL_GENRE, RatingLevels} from '../const';
+import {INITIAL_GENRE, RatingLevels, UNIT_OF_TIME} from '../const';
 
 export const adaptFilmToClient = (film) => {
   const adaptedFilm = Object.assign(
@@ -54,4 +54,10 @@ export const getRaitingText = (rating) => {
     return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
   });
   return raitingLevel.TEXT;
+};
+
+export const getTimeInHourAndMinutes = (timeInMinutes) => {
+  const hours = Math.floor(timeInMinutes / UNIT_OF_TIME);
+  const minutes = timeInMinutes - (hours * UNIT_OF_TIME);
+  return `${hours}h ${minutes}m`;
 };

@@ -23,9 +23,11 @@ const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus
   }
 
   const getUserElement = (status) => {
-    return status === AuthorizationStatus.AUTH ? <div className="user-block__avatar">
-      <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
-    </div> : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+    return status === AuthorizationStatus.AUTH
+      ? <div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
   };
 
   return <>

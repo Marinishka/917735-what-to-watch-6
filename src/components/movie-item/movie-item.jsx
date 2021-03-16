@@ -9,14 +9,6 @@ import {ActionCreator} from '../../store/action';
 const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiveFilm}) => {
   const {previewVideoLink, name, id, previewImage, genre} = film;
 
-  const handleGenreChange = () => {
-    changeGenre(genre);
-  };
-
-  const hanleChangeActiveFilm = () => {
-    changeActiveFilm(film);
-  };
-
   let timerId;
   const getSrcVideo = () => {
     return isPlaying ? previewVideoLink : ``;
@@ -36,8 +28,8 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
         onClick={() => {
-          hanleChangeActiveFilm();
-          handleGenreChange();
+          changeActiveFilm(film);
+          changeGenre(genre);
         }}>
         {`${name}`}
       </Link>
