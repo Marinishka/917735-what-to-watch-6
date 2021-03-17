@@ -11,7 +11,7 @@ const GenresList = ({activeGenre, changeGenre, allGenres}) => {
   };
 
   return <ul className="catalog__genres-list" onClick={handleGenreChange}>
-    {allGenres.map((genre) => {
+    {allGenres.slice(0, allGenres.length >= 10 ? 10 : allGenres.length).map((genre) => {
       return <GenresItem key={genre} genre={genre} activeGenre={activeGenre}/>;
     })}
   </ul>;

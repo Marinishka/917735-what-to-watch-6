@@ -1,6 +1,20 @@
 import PropTypes from 'prop-types';
 
+export const UNIT_OF_TIME = 60;
+
 export const INITIAL_GENRE = `All genres`;
+
+export const TabsTitles = {
+  OVERVIEW: `Overview`,
+  REVIEWS: `Reviews`,
+  DETAILS: `Details`
+};
+
+export const APIRoutes = {
+  FILMS: `/films`,
+  LOGIN: `/login`,
+  PREVIEW_FILM: `/films/promo`
+};
 
 export const Routes = {
   MAIN: `/`,
@@ -9,6 +23,11 @@ export const Routes = {
   MOVIE_PAGE: `/films/:id?`,
   ADD_REVIEW: `/films/:id/review`,
   PLAYER: `/player/:id?`
+};
+
+export const AuthorizationStatus = {
+  AUTH: `AUTH`,
+  NO_AUTH: `NO_AUTH`,
 };
 
 export const RatingLevels = [

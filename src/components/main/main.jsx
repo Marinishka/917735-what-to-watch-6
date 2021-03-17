@@ -1,15 +1,36 @@
-import React from 'react';
-import {useHistory} from 'react-router-dom';
-import {PROP_TYPES_FILMS, PROP_TYPES_PREVIEW_FILM, QuantityFilmsOnPage} from '../../const';
+import React, {useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {PROP_TYPES_FILMS, QuantityFilmsOnPage, Routes, PROP_TYPES_PREVIEW_FILM, AuthorizationStatus} from '../../const';
 import PropTypes from 'prop-types';
-import MoviesList from '../movies-list/movies-list.jsx';
+import MoviesList from '../movies-list/movies-list';
 import GenresList from '../genres-list/genres-list';
 import {connect} from 'react-redux';
+import Loading from '../loading/loading';
+import {fetchFilmList} from '../../store/api-actions';
 
-const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePreviewFilmId}) => {
-  const history = useHistory();
+const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus, onButtonPlayerClick}) => {
   const {posterImage, backgroundImage, name, genre, released, id} = previewFilm;
-  return <React.Fragment>
+  useEffect(() => {
+    if (!isDataLoaded) {
+      onLoadData();
+    }
+  }, [isDataLoaded]);
+
+  if (!isDataLoaded) {
+    return (
+      <Loading />
+    );
+  }
+
+  const getUserElement = (status) => {
+    return status === AuthorizationStatus.AUTH
+      ? <div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+  };
+
+  return <>
     <section className="movie-card">
       <div className="movie-card__bg">
         <img src={backgroundImage} alt={name} />
@@ -27,9 +48,7 @@ const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePre
         </div>
 
         <div className="user-block">
-          <div className="user-block__avatar">
-            <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-          </div>
+          {getUserElement(authorizationStatus)}
         </div>
       </header>
 
@@ -48,7 +67,7 @@ const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePre
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                history.push(`/player/${id}`);
+                onButtonPlayerClick(`/player/${id}`);
               }}><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
                 </use>
                 </svg>
@@ -65,14 +84,13 @@ const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePre
         </div>
       </div>
     </section>
-
     <div className="page-content">
       <section className="catalog">
         <h2 className="catalog__title visually-hidden">Catalog</h2>
 
-        <GenresList films={films}/>
+        <GenresList/>
 
-        <MoviesList films={films} handleFilmClick={handleFilmClick} quantity={QuantityFilmsOnPage.MAIN} handleFilmMouseIn={handleFilmMouseIn} activePreviewFilmId={activePreviewFilmId}/>
+        <MoviesList films={films} quantity={QuantityFilmsOnPage.MAIN}/>
 
         <div className="catalog__more">
           <button className="catalog__button" type="button">Show more</button>
@@ -93,23 +111,31 @@ const Main = ({previewFilm, films, handleFilmClick, handleFilmMouseIn, activePre
         </div>
       </footer>
     </div>
-  </React.Fragment>;
+  </>;
 };
 
 Main.propTypes = {
-  previewFilm: PROP_TYPES_PREVIEW_FILM,
   films: PROP_TYPES_FILMS,
-  handleFilmClick: PropTypes.func.isRequired,
-  handleFilmMouseIn: PropTypes.func.isRequired,
-  activePreviewFilmId: PropTypes.oneOfType([
-    PropTypes.oneOf([`null`]), PropTypes.number
-  ])
+  isDataLoaded: PropTypes.bool.isRequired,
+  onLoadData: PropTypes.func.isRequired,
+  previewFilm: PROP_TYPES_PREVIEW_FILM,
+  authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
+  onButtonPlayerClick: PropTypes.func.isRequired
 };
+
+const mapStateToProps = ({films, isDataLoaded, previewFilm, authorizationStatus}) => ({
+  films,
+  isDataLoaded,
+  previewFilm,
+  authorizationStatus
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLoadData() {
+    dispatch(fetchFilmList());
+  }
+});
 
 export {Main};
 
-const mapStateToProps = ({films}) => ({
-  films
-});
-
-export default connect(mapStateToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

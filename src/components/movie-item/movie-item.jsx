@@ -6,12 +6,8 @@ import VideoPlayer from '../video-player/video-player';
 import {connect} from 'react-redux';
 import {ActionCreator} from '../../store/action';
 
-const MovieItem = ({film, handleFilmClick, isPlaying, handleFilmMouseIn, changeGenre}) => {
+const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiveFilm}) => {
   const {previewVideoLink, name, id, previewImage, genre} = film;
-
-  const handleGenreChange = () => {
-    changeGenre(genre);
-  };
 
   let timerId;
   const getSrcVideo = () => {
@@ -31,9 +27,9 @@ const MovieItem = ({film, handleFilmClick, isPlaying, handleFilmMouseIn, changeG
     </div>
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
-        onClick={(evt) => {
-          handleFilmClick(film);
-          handleGenreChange(evt);
+        onClick={() => {
+          changeActiveFilm(film);
+          changeGenre(genre);
         }}>
         {`${name}`}
       </Link>
@@ -43,19 +39,23 @@ const MovieItem = ({film, handleFilmClick, isPlaying, handleFilmMouseIn, changeG
 
 MovieItem.propTypes = {
   film: PROP_TYPES_FILM,
-  handleFilmClick: PropTypes.func.isRequired,
+  changeActiveFilm: PropTypes.func.isRequired,
   handleFilmMouseIn: PropTypes.func.isRequired,
   isPlaying: PropTypes.bool.isRequired,
   changeGenre: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({activeGenre}) => ({
-  activeGenre
+const mapStateToProps = ({activeGenre, activeFilm}) => ({
+  activeGenre,
+  activeFilm
 });
 
 const mapDispatchToProps = (dispatch) => ({
   changeGenre(genre) {
     dispatch(ActionCreator.chengeGenre(genre));
+  },
+  changeActiveFilm(activeFilm) {
+    dispatch(ActionCreator.changeActiveFilm(activeFilm));
   }
 }
 );
