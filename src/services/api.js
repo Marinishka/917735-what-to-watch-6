@@ -1,8 +1,5 @@
 import axios from 'axios';
-
-const BACKEND_URL = `https://6.react.pages.academy/wtw`;
-
-const REQUEST_TIMEOUT = 5000;
+import {BACKEND_URL, REQUEST_TIMEOUT} from '../const';
 
 const HttpCode = {
   UNAUTHORIZED: 401

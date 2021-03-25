@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {PROP_TYPES_FILMS, QuantityFilmsOnPage, Routes, PROP_TYPES_PREVIEW_FILM, AuthorizationStatus} from '../../const';
 import PropTypes from 'prop-types';
@@ -6,21 +6,45 @@ import MoviesList from '../movies-list/movies-list';
 import GenresList from '../genres-list/genres-list';
 import {connect} from 'react-redux';
 import Loading from '../loading/loading';
-import {fetchFilmList} from '../../store/api-actions';
+import {fetchFilmList, fetchPreviewFilm, postFavoriteStatus} from '../../store/api-actions';
+import {getFilteredFilms} from '../../utils/common.js';
+import {changeActiveFilm} from '../../store/action';
+import {getFilms, getLoadedFilmsStatus, getLoadedPreviewFolmStatus, getPreviewFilm} from '../../store/data/selectors';
+import {getAuthorizationStatus} from '../../store/user/selectors';
+import {getActiveGenre} from '../../store/local-state/selectors';
 
-const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus, onButtonPlayerClick}) => {
-  const {posterImage, backgroundImage, name, genre, released, id} = previewFilm;
+const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onLoadFilmList, previewFilm, authorizationStatus, onButtonClick, activeGenre, onChangeActiveFilm, onChangeFavoriteStatus}) => {
+  const {posterImage, backgroundImage, name, genre, released, id, isFavorite} = previewFilm;
+  const [quantityFilms, setQuantityFilms] = useState(QuantityFilmsOnPage.MAIN);
+
+  const isDataLoaded = isFilmsLoaded && isPreviewFilmLoaded;
+
   useEffect(() => {
-    if (!isDataLoaded) {
-      onLoadData();
+    if (!isFilmsLoaded) {
+      onLoadFilmList();
     }
-  }, [isDataLoaded]);
+  }, [isFilmsLoaded]);
+
+  useEffect(() => {
+    if (!isPreviewFilmLoaded) {
+      onLoadPreviewFilm();
+    }
+  }, [isPreviewFilmLoaded]);
 
   if (!isDataLoaded) {
     return (
       <Loading />
     );
   }
+
+  const filteredFilms = getFilteredFilms(activeGenre, films);
+
+  const getButtonShowMore = () => {
+    return quantityFilms <= filteredFilms.length
+      ? <div className="catalog__more">
+        <button className="catalog__button" type="button"onClick={() => setQuantityFilms((prevQuantityFilms) => prevQuantityFilms + QuantityFilmsOnPage.MAIN)} >Show more</button>
+      </div> : ``;
+  };
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
@@ -67,13 +91,21 @@ const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                onButtonPlayerClick(`/player/${id}`);
+                onChangeActiveFilm(previewFilm);
+                onButtonClick(`/player/${id}`);
               }}><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
                 </use>
                 </svg>
                 <span>Play</span>
               </button>
-              <button className="btn btn--list movie-card__button" type="button">
+              <button className="btn btn--list movie-card__button" type="button" onClick={() => {
+                if (authorizationStatus === AuthorizationStatus.NO_AUTH) {
+                  onButtonClick(Routes.SIGN_IN);
+                } else {
+                  const status = Number(isFavorite);
+                  onChangeFavoriteStatus({id, status});
+                }
+              }}>
                 <svg viewBox="0 0 19 20" width="19" height="20">
                   <use xlinkHref="#add"></use>
                 </svg>
@@ -90,11 +122,9 @@ const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus
 
         <GenresList/>
 
-        <MoviesList films={films} quantity={QuantityFilmsOnPage.MAIN}/>
+        <MoviesList films={filteredFilms} quantity={quantityFilms}/>
 
-        <div className="catalog__more">
-          <button className="catalog__button" type="button">Show more</button>
-        </div>
+        {getButtonShowMore()}
       </section>
 
       <footer className="page-footer">
@@ -116,23 +146,39 @@ const Main = ({films, isDataLoaded, onLoadData, previewFilm, authorizationStatus
 
 Main.propTypes = {
   films: PROP_TYPES_FILMS,
-  isDataLoaded: PropTypes.bool.isRequired,
-  onLoadData: PropTypes.func.isRequired,
+  isPreviewFilmLoaded: PropTypes.bool.isRequired,
+  isFilmsLoaded: PropTypes.bool.isRequired,
+  onLoadFilmList: PropTypes.func.isRequired,
+  onLoadPreviewFilm: PropTypes.func.isRequired,
+  onChangeActiveFilm: PropTypes.func.isRequired,
   previewFilm: PROP_TYPES_PREVIEW_FILM,
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
-  onButtonPlayerClick: PropTypes.func.isRequired
+  onButtonClick: PropTypes.func.isRequired,
+  activeGenre: PropTypes.string.isRequired,
+  onChangeFavoriteStatus: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({films, isDataLoaded, previewFilm, authorizationStatus}) => ({
-  films,
-  isDataLoaded,
-  previewFilm,
-  authorizationStatus
+const mapStateToProps = (state) => ({
+  films: getFilms(state),
+  isPreviewFilmLoaded: getLoadedPreviewFolmStatus(state),
+  isFilmsLoaded: getLoadedFilmsStatus(state),
+  previewFilm: getPreviewFilm(state),
+  authorizationStatus: getAuthorizationStatus(state),
+  activeGenre: getActiveGenre(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onLoadData() {
+  onLoadPreviewFilm() {
+    dispatch(fetchPreviewFilm());
+  },
+  onLoadFilmList() {
     dispatch(fetchFilmList());
+  },
+  onChangeActiveFilm(activeFilm) {
+    dispatch(changeActiveFilm(activeFilm));
+  },
+  onChangeFavoriteStatus(data) {
+    dispatch(postFavoriteStatus(data));
   }
 });
 

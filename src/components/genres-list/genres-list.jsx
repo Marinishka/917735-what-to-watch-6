@@ -1,13 +1,15 @@
 import React from 'react';
 import GenresItem from '../genres-item/genres-item';
-import {ActionCreator} from '../../store/action';
+import {changeGenre} from '../../store/action';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {getActiveGenre} from '../../store/local-state/selectors';
+import {getAllGenres} from '../../store/data/selectors';
 
-const GenresList = ({activeGenre, changeGenre, allGenres}) => {
+const GenresList = ({activeGenre, onChangeGenre, allGenres}) => {
 
   const handleGenreChange = (evt) => {
-    changeGenre(evt.target.dataset.genre);
+    onChangeGenre(evt.target.dataset.genre);
   };
 
   return <ul className="catalog__genres-list" onClick={handleGenreChange}>
@@ -19,19 +21,19 @@ const GenresList = ({activeGenre, changeGenre, allGenres}) => {
 
 GenresList.propTypes = {
   activeGenre: PropTypes.string.isRequired,
-  changeGenre: PropTypes.func.isRequired,
+  onChangeGenre: PropTypes.func.isRequired,
   allGenres: PropTypes.array.isRequired
 };
 
-const mapStateToProps = ({activeGenre, allGenres}) => ({
-  activeGenre,
-  allGenres
+const mapStateToProps = (state) => ({
+  activeGenre: getActiveGenre(state),
+  allGenres: getAllGenres(state)
 }
 );
 
 const mapDispatchToProps = (dispatch) => ({
-  changeGenre(genre) {
-    dispatch(ActionCreator.chengeGenre(genre));
+  onChangeGenre(genre) {
+    dispatch(changeGenre(genre));
   }
 });
 

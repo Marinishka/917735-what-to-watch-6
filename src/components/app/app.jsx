@@ -16,7 +16,7 @@ const App = () => {
     <BrowserRouter history={browserHistory}>
       <Switch>
         <Route path={Routes.MAIN} exact render={({history}) => {
-          return <Main onButtonPlayerClick={(url) => history.push(url)}/>;
+          return <Main onButtonClick={(url) => history.push(url)}/>;
         }}/>
         <Route path={Routes.SIGN_IN} exact>
           <SignIn/>
@@ -27,7 +27,7 @@ const App = () => {
           render={() => <MyList/>}>
         </PrivateRoute>
         <Route path={Routes.MOVIE_PAGE} exact render={({history}) => {
-          return <MoviePage onButtonPlayerClick={(url) => history.push(url)}/>;
+          return <MoviePage onButtonClick={(url) => history.push(url)}/>;
         }}/>
         <PrivateRoute
           path={Routes.ADD_REVIEW}

@@ -2,7 +2,24 @@ import PropTypes from 'prop-types';
 
 export const UNIT_OF_TIME = 60;
 
+export const BACKEND_URL = `https://6.react.pages.academy/wtw`;
+
+export const REQUEST_TIMEOUT = 5000;
+
+export const REVIEWS_ROWS = 3;
+
 export const INITIAL_GENRE = `All genres`;
+
+export const STARS_QUANTITY = 10;
+export const StartState = {
+  STAR_RATING: null,
+  REVIEW_TEXT: ``
+};
+
+export const TextLenghtValid = {
+  MIN: 50,
+  MAX: 400
+};
 
 export const TabsTitles = {
   OVERVIEW: `Overview`,
@@ -13,7 +30,9 @@ export const TabsTitles = {
 export const APIRoutes = {
   FILMS: `/films`,
   LOGIN: `/login`,
-  PREVIEW_FILM: `/films/promo`
+  PREVIEW_FILM: `/films/promo`,
+  FAVORITE_MARK: `/favorite`,
+  COMMENTS: `/comments`
 };
 
 export const Routes = {
@@ -80,9 +99,9 @@ export const PROP_TYPES_FILM = PropTypes.shape({
 }).isRequired;
 export const PROP_TYPES_FILMS = PropTypes.arrayOf(PROP_TYPES_FILM);
 export const PROP_TYPES_PREVIEW_FILM = PropTypes.shape({
-  posterImage: PropTypes.string.isRequired,
-  backgroundImage: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  genre: PropTypes.string.isRequired,
-  released: PropTypes.number.isRequired
+  posterImage: PropTypes.string,
+  backgroundImage: PropTypes.string,
+  name: PropTypes.string,
+  genre: PropTypes.string,
+  released: PropTypes.number
 });

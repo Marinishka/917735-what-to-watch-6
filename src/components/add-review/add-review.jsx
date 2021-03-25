@@ -1,18 +1,13 @@
-import React, {Fragment, useState} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
 import {Routes, PROP_TYPES_FILM} from '../../const';
 import {connect} from 'react-redux';
-
-const STARS_QUANTITY = 10;
-const StartState = {
-  STAR_RATING: 0,
-  REVIEW_TEXT: ``
-};
+import AddReviewForm from '../add-review-form/add-review-form';
+import {getActiveFilm} from '../../store/local-state/selectors';
 
 const AddReview = ({activeFilm}) => {
-  const [, setStarRating] = useState(StartState.STAR_RATING);
-  const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
   const {name, posterImage, backgroundImage} = activeFilm;
+
   return <section className="movie-card movie-card--full">
     <div className="movie-card__header">
       <div className="movie-card__bg">
@@ -54,35 +49,7 @@ const AddReview = ({activeFilm}) => {
     </div>
 
     <div className="add-review">
-      <form action="#" className="add-review__form" onSubmit={(evt) => {
-        evt.preventDefault();
-      }}>
-        <div className="rating">
-          <div className="rating__stars">
-            {new Array(STARS_QUANTITY).fill(null).map((_, index) => {
-              const starNumber = index + 1;
-              return (
-                <Fragment key={starNumber}>
-                  <input className="rating__input" id={`star-${starNumber}`} type="radio" name="rating" value={starNumber} onChange={({target}) => {
-                    setStarRating(target.value);
-                  }}/>
-                  <label className="rating__label" htmlFor={`star-${starNumber}`}>Rating {starNumber}</label>
-                </Fragment>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="add-review__text">
-          <textarea className="add-review__textarea" name="review-text" id="review-text" placeholder="Review text" value={reviewText} onChange={({target}) => {
-            setReviewText(target.value);
-          }}/>
-          <div className="add-review__submit">
-            <button className="add-review__btn" type="submit">Post</button>
-          </div>
-
-        </div>
-      </form>
+      <AddReviewForm></AddReviewForm>
     </div>
 
   </section>;
@@ -92,8 +59,8 @@ AddReview.propTypes = {
   activeFilm: PROP_TYPES_FILM
 };
 
-const mapStateToProps = ({activeFilm}) => ({
-  activeFilm
+const mapStateToProps = (state) => ({
+  activeFilm: getActiveFilm(state)
 });
 
 export {AddReview};

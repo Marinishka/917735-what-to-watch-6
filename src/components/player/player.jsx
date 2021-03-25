@@ -3,6 +3,7 @@ import {PROP_TYPES_FILM, UNIT_OF_TIME} from '../../const';
 import VideoPlayer from '../video-player/video-player';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {getActiveFilm} from '../../store/local-state/selectors';
 
 const Player = ({activeFilm, onExitClick}) => {
   const {videoLink, posterImage, runTime, name} = activeFilm;
@@ -82,8 +83,8 @@ Player.propTypes = {
   onExitClick: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({activeFilm}) => ({
-  activeFilm
+const mapStateToProps = (state) => ({
+  activeFilm: getActiveFilm(state)
 });
 
 export {Player};

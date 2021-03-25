@@ -4,9 +4,11 @@ import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import VideoPlayer from '../video-player/video-player';
 import {connect} from 'react-redux';
-import {ActionCreator} from '../../store/action';
+import {changeGenre, changeActiveFilm} from '../../store/action';
+import {getAllGenres} from '../../store/data/selectors';
+import {getActiveFilm} from '../../store/local-state/selectors';
 
-const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiveFilm}) => {
+const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeActiveFilm}) => {
   const {previewVideoLink, name, id, previewImage, genre} = film;
 
   let timerId;
@@ -28,8 +30,8 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
         onClick={() => {
-          changeActiveFilm(film);
-          changeGenre(genre);
+          onChangeActiveFilm(film);
+          onChangeGenre(genre);
         }}>
         {`${name}`}
       </Link>
@@ -39,23 +41,23 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
 
 MovieItem.propTypes = {
   film: PROP_TYPES_FILM,
-  changeActiveFilm: PropTypes.func.isRequired,
+  onChangeActiveFilm: PropTypes.func.isRequired,
   handleFilmMouseIn: PropTypes.func.isRequired,
   isPlaying: PropTypes.bool.isRequired,
-  changeGenre: PropTypes.func.isRequired
+  onChangeGenre: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({activeGenre, activeFilm}) => ({
-  activeGenre,
-  activeFilm
+const mapStateToProps = (state) => ({
+  activeGenre: getAllGenres(state),
+  activeFilm: getActiveFilm(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  changeGenre(genre) {
-    dispatch(ActionCreator.chengeGenre(genre));
+  onChangeGenre(genre) {
+    dispatch(changeGenre(genre));
   },
-  changeActiveFilm(activeFilm) {
-    dispatch(ActionCreator.changeActiveFilm(activeFilm));
+  onChangeActiveFilm(activeFilm) {
+    dispatch(changeActiveFilm(activeFilm));
   }
 }
 );

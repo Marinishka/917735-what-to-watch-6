@@ -1,9 +1,16 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILMS} from '../../const';
+import {Routes} from '../../const';
+import useAPI from '../../hooks/useAPI';
+import Loading from '../loading/loading';
 import MoviesList from '../movies-list/movies-list';
 
-const MyList = ({films}) => {
+const MyList = () => {
+  const [films, isLoading] = useAPI(`/favorite`);
+
+  if (isLoading) {
+    return <Loading></Loading>;
+  }
 
   return <div className="user-page">
     <header className="page-header user-page__head">
@@ -26,7 +33,10 @@ const MyList = ({films}) => {
 
     <section className="catalog">
       <h2 className="catalog__title visually-hidden">Catalog</h2>
-      <MoviesList data={films} quantity={films.length}/>
+      {films.length !== 0
+        ? <MoviesList data={films} quantity={films.length}/>
+        : <div>Your list is empty. Add your first movie</div>}
+
     </section>
 
     <footer className="page-footer">
@@ -43,10 +53,6 @@ const MyList = ({films}) => {
       </div>
     </footer>
   </div>;
-};
-
-MyList.propTypes = {
-  films: PROP_TYPES_FILMS,
 };
 
 export default MyList;
