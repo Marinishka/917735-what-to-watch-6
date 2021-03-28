@@ -6,15 +6,22 @@ import MoviesList from '../movies-list/movies-list';
 import GenresList from '../genres-list/genres-list';
 import {connect} from 'react-redux';
 import Loading from '../loading/loading';
-import {fetchFilmList, fetchPreviewFilm, postFavoriteStatus} from '../../store/api-actions';
+import {fetchFilmList, fetchPreviewFilm, logout, postFavoriteStatus} from '../../store/api-actions';
 import {getFilteredFilms} from '../../utils/common.js';
 import {changeActiveFilm} from '../../store/action';
 import {getFilms, getLoadedFilmsStatus, getLoadedPreviewFolmStatus, getPreviewFilm} from '../../store/data/selectors';
 import {getAuthorizationStatus} from '../../store/user/selectors';
 import {getActiveGenre} from '../../store/local-state/selectors';
 
-const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onLoadFilmList, previewFilm, authorizationStatus, onButtonClick, activeGenre, onChangeActiveFilm, onChangeFavoriteStatus}) => {
-  const {posterImage, backgroundImage, name, genre, released, id, isFavorite} = previewFilm;
+const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onLoadFilmList, previewFilm, authorizationStatus, onButtonClick, activeGenre, onChangeActiveFilm, onChangeFavoriteStatus, onLogout}) => {
+  const {posterImage,
+    backgroundImage,
+    name,
+    genre,
+    released,
+    id,
+    isFavorite} = previewFilm;
+
   const [quantityFilms, setQuantityFilms] = useState(QuantityFilmsOnPage.MAIN);
 
   const isDataLoaded = isFilmsLoaded && isPreviewFilmLoaded;
@@ -48,9 +55,11 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
-      ? <div className="user-block__avatar">
+      ? <><div className="user-block__avatar">
         <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
       </div>
+      <div onClick={() => (onLogout())}>Sign out</div>
+      </>
       : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
   };
 
@@ -155,7 +164,8 @@ Main.propTypes = {
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
   onButtonClick: PropTypes.func.isRequired,
   activeGenre: PropTypes.string.isRequired,
-  onChangeFavoriteStatus: PropTypes.func.isRequired
+  onChangeFavoriteStatus: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -179,6 +189,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   onChangeFavoriteStatus(data) {
     dispatch(postFavoriteStatus(data));
+  },
+  onLogout() {
+    dispatch(logout());
   }
 });
 

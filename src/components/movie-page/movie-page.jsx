@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import {getFilms} from '../../store/data/selectors';
 import {getActiveFilm} from '../../store/local-state/selectors';
 import {getAuthorizationStatus} from '../../store/user/selectors';
-import {postFavoriteStatus} from '../../store/api-actions';
+import {logout, postFavoriteStatus} from '../../store/api-actions';
 
-const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onChangeFavoriteStatus}) => {
+const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onChangeFavoriteStatus, onLogout}) => {
   const {id,
     backgroundImage,
     name,
@@ -21,9 +21,11 @@ const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onCha
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
-      ? <div className="user-block__avatar">
+      ? <><div className="user-block__avatar">
         <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
       </div>
+      <div onClick={() => (onLogout())}>Sign out</div>
+      </>
       : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
   };
 
@@ -126,7 +128,8 @@ MoviePage.propTypes = {
   films: PROP_TYPES_FILMS,
   onButtonClick: PropTypes.func.isRequired,
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
-  onChangeFavoriteStatus: PropTypes.func.isRequired
+  onChangeFavoriteStatus: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -138,6 +141,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onChangeFavoriteStatus(data) {
     dispatch(postFavoriteStatus(data));
+  },
+  onLogout() {
+    dispatch(logout());
   }
 });
 

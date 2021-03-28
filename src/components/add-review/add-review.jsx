@@ -1,12 +1,25 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM} from '../../const';
+import {Routes, PROP_TYPES_FILM, AuthorizationStatus} from '../../const';
 import {connect} from 'react-redux';
 import AddReviewForm from '../add-review-form/add-review-form';
 import {getActiveFilm} from '../../store/local-state/selectors';
+import PropTypes from 'prop-types';
+import {getAuthorizationStatus} from '../../store/user/selectors';
+import {logout} from '../../store/api-actions';
 
-const AddReview = ({activeFilm}) => {
+const AddReview = ({activeFilm, onButtonClick, authorizationStatus, onLogout}) => {
   const {name, posterImage, backgroundImage} = activeFilm;
+
+  const getUserElement = (status) => {
+    return status === AuthorizationStatus.AUTH
+      ? <><div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      <div onClick={() => (onLogout())}>Sign out</div>
+      </>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+  };
 
   return <section className="movie-card movie-card--full">
     <div className="movie-card__header">
@@ -37,9 +50,7 @@ const AddReview = ({activeFilm}) => {
         </nav>
 
         <div className="user-block">
-          <div className="user-block__avatar">
-            <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-          </div>
+          {getUserElement(authorizationStatus)}
         </div>
       </header>
 
@@ -49,20 +60,30 @@ const AddReview = ({activeFilm}) => {
     </div>
 
     <div className="add-review">
-      <AddReviewForm></AddReviewForm>
+      <AddReviewForm onButtonClick={onButtonClick}></AddReviewForm>
     </div>
 
   </section>;
 };
 
 AddReview.propTypes = {
-  activeFilm: PROP_TYPES_FILM
+  activeFilm: PROP_TYPES_FILM,
+  onButtonClick: PropTypes.func.isRequired,
+  authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
+  onLogout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  activeFilm: getActiveFilm(state)
+  activeFilm: getActiveFilm(state),
+  authorizationStatus: getAuthorizationStatus(state)
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLogout() {
+    dispatch(logout());
+  }
 });
 
 export {AddReview};
 
-export default connect(mapStateToProps)(AddReview);
+export default connect(mapStateToProps, mapDispatchToProps)(AddReview);

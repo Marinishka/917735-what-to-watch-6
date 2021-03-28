@@ -5,11 +5,11 @@ import PropTypes from 'prop-types';
 import {PROP_TYPES_FILM, STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
 import {getActiveFilm} from '../../store/local-state/selectors';
 
-const AddReviewForm = ({activeFilm, onSubmit}) => {
+const AddReviewForm = ({activeFilm, onSubmit, onButtonClick}) => {
   const {id} = activeFilm;
   const [statusForm, setStatusForm] = useState({
     isDisabled: true,
-    isSaving: false
+    isError: false
   });
   const [starRating, setStarRating] = useState(StartState.STAR_RATING);
   const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
@@ -17,7 +17,7 @@ const AddReviewForm = ({activeFilm, onSubmit}) => {
   useEffect(() => {
     setStatusForm({
       ...statusForm,
-      isDisabled: isDataValid()});
+      isDisabled: !isDataValid()});
   }, [starRating, reviewText]);
 
   const isTextareaValid = () => {
@@ -35,10 +35,21 @@ const AddReviewForm = ({activeFilm, onSubmit}) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
+    setStatusForm({
+      isDisabled: true,
+      isError: false});
     onSubmit({
       id,
       starRating,
       reviewText
+    })
+    .then(() => {
+      onButtonClick(`/films/${id}`);
+    })
+    .catch(() => {
+      setStatusForm({
+        isDisabled: !isDataValid(),
+        isError: true});
     });
   };
 
@@ -64,16 +75,18 @@ const AddReviewForm = ({activeFilm, onSubmit}) => {
         setReviewText(target.value);
       }}/>
       <div className="add-review__submit">
-        <button className="add-review__btn" type="submit" disabled={!statusForm.isDisabled}>Post</button>
+        <button className="add-review__btn" type="submit" disabled={statusForm.isDisabled}>Post</button>
       </div>
 
     </div>
+    {statusForm.isError ? <div>We have not submitted your review. Try to repeat</div> : ``}
   </form>;
 };
 
 AddReviewForm.propTypes = {
   activeFilm: PROP_TYPES_FILM,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  onButtonClick: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -82,7 +95,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onSubmit(data) {
-    dispatch(postReview(data));
+    return dispatch(postReview(data));
   }
 });
 

@@ -23,6 +23,12 @@ export const login = ({login: email, password}) => (dispatch, _getState, api) =>
     .then(() => dispatch(requireAuthorization(AuthorizationStatus.AUTH))).then(() => dispatch(redirectToRoute(Routes.MAIN)))
 );
 
+export const logout = () => (dispatch, _getState, api) => {
+  api.get(APIRoutes.LOGOUT)
+  .then(() => dispatch(requireAuthorization(AuthorizationStatus.NO_AUTH)))
+  .catch(() => {});
+};
+
 export const postReview = ({id, starRating: rating, reviewText: comment}) => (dispatch, _getState, api) => (
   api.post(`${APIRoutes.COMMENTS}/${id}`, {rating, comment})
   .then(() => dispatch(redirectToRoute(Routes.MOVIE_PAGE)))

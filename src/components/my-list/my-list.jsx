@@ -1,12 +1,26 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {Routes} from '../../const';
+import {AuthorizationStatus, Routes} from '../../const';
 import useAPI from '../../hooks/useAPI';
+import {getAuthorizationStatus} from '../../store/user/selectors';
 import Loading from '../loading/loading';
 import MoviesList from '../movies-list/movies-list';
+import PropTypes from 'prop-types';
+import {logout} from '../../store/api-actions';
 
-const MyList = () => {
+const MyList = ({authorizationStatus, onLogout}) => {
   const [films, isLoading] = useAPI(`/favorite`);
+
+  const getUserElement = (status) => {
+    return status === AuthorizationStatus.AUTH
+      ? <><div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      <div onClick={() => (onLogout())}>Sign out</div>
+      </>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+  };
 
   if (isLoading) {
     return <Loading></Loading>;
@@ -25,9 +39,7 @@ const MyList = () => {
       <h1 className="page-title user-page__title">My list</h1>
 
       <div className="user-block">
-        <div className="user-block__avatar">
-          <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-        </div>
+        {getUserElement(authorizationStatus)}
       </div>
     </header>
 
@@ -55,4 +67,21 @@ const MyList = () => {
   </div>;
 };
 
-export default MyList;
+MyList.propTypes = {
+  authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
+  onLogout: PropTypes.func.isRequired
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  onLogout() {
+    dispatch(logout());
+  }
+});
+
+const mapStateToProps = (state) => ({
+  authorizationStatus: getAuthorizationStatus(state)
+});
+
+export {MyList};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyList);

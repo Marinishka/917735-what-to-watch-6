@@ -32,7 +32,9 @@ const App = () => {
         <PrivateRoute
           path={Routes.ADD_REVIEW}
           exact
-          render={() => <AddReview/>}>
+          render={({history}) => {
+            return <AddReview onButtonClick={(url) => history.push(url)}/>;
+          }}>
         </PrivateRoute>
         <Route path={Routes.PLAYER} exact render={({history}) => {
           return <Player onExitClick={() => history.goBack()}/>;

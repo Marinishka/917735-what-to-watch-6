@@ -30,6 +30,7 @@ export const TabsTitles = {
 export const APIRoutes = {
   FILMS: `/films`,
   LOGIN: `/login`,
+  LOGOUT: `logout`,
   PREVIEW_FILM: `/films/promo`,
   FAVORITE_MARK: `/favorite`,
   COMMENTS: `/comments`

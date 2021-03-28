@@ -18,10 +18,11 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeA
 
   return <article className="small-movie-card catalog__movies-card"
     onMouseOver={() => {
+      clearTimeout(timerId);
       timerId = setTimeout(handleFilmMouseIn, 1000, id);
     }}
     onMouseLeave={() => {
-      clearInterval(timerId);
+      clearTimeout(timerId);
       handleFilmMouseIn(null);
     }}>
     <div className="small-movie-card__image">
@@ -30,6 +31,7 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeA
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
         onClick={() => {
+          clearTimeout(timerId);
           onChangeActiveFilm(film);
           onChangeGenre(genre);
         }}>
