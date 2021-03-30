@@ -15,8 +15,8 @@ const App = () => {
   return (
     <BrowserRouter history={browserHistory}>
       <Switch>
-        <Route path={Routes.MAIN} exact render={({history}) => {
-          return <Main onButtonClick={(url) => history.push(url)}/>;
+        <Route path={Routes.MAIN} exact render={() => {
+          return <Main/>;
         }}/>
         <Route path={Routes.SIGN_IN} exact>
           <SignIn/>
@@ -26,18 +26,18 @@ const App = () => {
           exact
           render={() => <MyList/>}>
         </PrivateRoute>
-        <Route path={Routes.MOVIE_PAGE} exact render={({history}) => {
-          return <MoviePage onButtonClick={(url) => history.push(url)}/>;
+        <Route path={Routes.MOVIE_PAGE} exact render={() => {
+          return <MoviePage/>;
         }}/>
         <PrivateRoute
           path={Routes.ADD_REVIEW}
           exact
-          render={({history}) => {
-            return <AddReview onButtonClick={(url) => history.push(url)}/>;
+          render={() => {
+            return <AddReview/>;
           }}>
         </PrivateRoute>
-        <Route path={Routes.PLAYER} exact render={({history}) => {
-          return <Player onExitClick={() => history.goBack()}/>;
+        <Route path={Routes.PLAYER} exact render={() => {
+          return <Player/>;
         }}/>
         <Route>
           <NotFound/>

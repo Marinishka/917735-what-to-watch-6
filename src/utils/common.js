@@ -49,11 +49,11 @@ export const getFilteredFilms = (genre, films) => {
   return films;
 };
 
-export const getRaitingText = (rating) => {
-  const raitingLevel = RatingLevels.filter((level) => {
+export const getRatingText = (rating) => {
+  const ratingLevel = RatingLevels.filter((level) => {
     return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
   });
-  return raitingLevel.TEXT;
+  return ratingLevel.TEXT;
 };
 
 export const getTimeInHourAndMinutes = (timeInMinutes) => {

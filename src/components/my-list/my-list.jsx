@@ -46,7 +46,7 @@ const MyList = ({authorizationStatus, onLogout}) => {
     <section className="catalog">
       <h2 className="catalog__title visually-hidden">Catalog</h2>
       {films.length !== 0
-        ? <MoviesList data={films} quantity={films.length}/>
+        ? <MoviesList films={films} quantity={films.length}/>
         : <div>Your list is empty. Add your first movie</div>}
 
     </section>

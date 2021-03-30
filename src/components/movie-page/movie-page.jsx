@@ -1,23 +1,37 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage, AuthorizationStatus} from '../../const';
+import {Routes, PROP_TYPES_FILM, QuantityFilmsOnPage, AuthorizationStatus, APIRoutes} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import {connect} from 'react-redux';
 import Tabs from '../tabs/tabs';
 import PropTypes from 'prop-types';
-import {getFilms} from '../../store/data/selectors';
 import {getActiveFilm} from '../../store/local-state/selectors';
 import {getAuthorizationStatus} from '../../store/user/selectors';
 import {logout, postFavoriteStatus} from '../../store/api-actions';
+import {useHistory} from 'react-router-dom';
+import useAPI from '../../hooks/useAPI';
+import Loading from '../loading/loading';
+import {adaptFilmToClient} from '../../utils/common';
 
-const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onChangeFavoriteStatus, onLogout}) => {
-  const {id,
-    backgroundImage,
+const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onLogout}) => {
+  const {id} = activeFilm;
+
+  const [film, isLoading] = useAPI(`${APIRoutes.FILMS}/${id}`);
+
+  if (isLoading) {
+    return (
+      <Loading />
+    );
+  }
+
+  const {backgroundImage,
     name,
     genre,
     released,
     posterImage,
-    isFavorite} = activeFilm;
+    isFavorite} = adaptFilmToClient(film);
+
+  const history = useHistory();
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
@@ -62,7 +76,7 @@ const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onCha
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                onButtonClick(`/player/${id}`);
+                history.push(`/player/${id}`);
               }}>
                 <svg viewBox="0 0 19 19" width="19" height="19">
                   <use xlinkHref="#play-s"></use>
@@ -71,7 +85,7 @@ const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onCha
               </button>
               <button className="btn btn--list movie-card__button" type="button" onClick={() => {
                 if (authorizationStatus === AuthorizationStatus.NO_AUTH) {
-                  onButtonClick(Routes.SIGN_IN);
+                  history.push(Routes.SIGN_IN);
                 } else {
                   const status = Number(isFavorite);
                   onChangeFavoriteStatus({id, status});
@@ -103,7 +117,7 @@ const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onCha
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList films={films} quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
+        <MoviesList quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
       </section>
 
       <footer className="page-footer">
@@ -125,15 +139,12 @@ const MoviePage = ({activeFilm, films, onButtonClick, authorizationStatus, onCha
 
 MoviePage.propTypes = {
   activeFilm: PROP_TYPES_FILM,
-  films: PROP_TYPES_FILMS,
-  onButtonClick: PropTypes.func.isRequired,
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
   onChangeFavoriteStatus: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
-  films: getFilms(state),
   activeFilm: getActiveFilm(state),
   authorizationStatus: getAuthorizationStatus(state)
 });

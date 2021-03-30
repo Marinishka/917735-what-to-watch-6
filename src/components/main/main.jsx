@@ -12,8 +12,10 @@ import {changeActiveFilm} from '../../store/action';
 import {getFilms, getLoadedFilmsStatus, getLoadedPreviewFolmStatus, getPreviewFilm} from '../../store/data/selectors';
 import {getAuthorizationStatus} from '../../store/user/selectors';
 import {getActiveGenre} from '../../store/local-state/selectors';
+import {useHistory} from 'react-router-dom';
+// import {PreviewFilmCard} from '../preview-film-card/preview-film-card';
 
-const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onLoadFilmList, previewFilm, authorizationStatus, onButtonClick, activeGenre, onChangeActiveFilm, onChangeFavoriteStatus, onLogout}) => {
+const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onLoadFilmList, previewFilm, authorizationStatus, activeGenre, onChangeActiveFilm, onChangeFavoriteStatus, onLogout}) => {
   const {posterImage,
     backgroundImage,
     name,
@@ -22,9 +24,9 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
     id,
     isFavorite} = previewFilm;
 
-  const [quantityFilms, setQuantityFilms] = useState(QuantityFilmsOnPage.MAIN);
+  const history = useHistory();
 
-  const isDataLoaded = isFilmsLoaded && isPreviewFilmLoaded;
+  const [quantityFilms, setQuantityFilms] = useState(QuantityFilmsOnPage.MAIN);
 
   useEffect(() => {
     if (!isFilmsLoaded) {
@@ -38,7 +40,7 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
     }
   }, [isPreviewFilmLoaded]);
 
-  if (!isDataLoaded) {
+  if (!isFilmsLoaded || !isPreviewFilmLoaded) {
     return (
       <Loading />
     );
@@ -49,7 +51,7 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
   const getButtonShowMore = () => {
     return quantityFilms <= filteredFilms.length
       ? <div className="catalog__more">
-        <button className="catalog__button" type="button"onClick={() => setQuantityFilms((prevQuantityFilms) => prevQuantityFilms + QuantityFilmsOnPage.MAIN)} >Show more</button>
+        <button className="catalog__button" type="button" onClick={() => setQuantityFilms((prevQuantityFilms) => prevQuantityFilms + QuantityFilmsOnPage.MAIN)} >Show more</button>
       </div> : ``;
   };
 
@@ -101,7 +103,7 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
                 onChangeActiveFilm(previewFilm);
-                onButtonClick(`/player/${id}`);
+                history.push(`/player/${id}`);
               }}><svg viewBox="0 0 19 19" width="19" height="19"><use xlinkHref="#play-s">
                 </use>
                 </svg>
@@ -109,7 +111,7 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
               </button>
               <button className="btn btn--list movie-card__button" type="button" onClick={() => {
                 if (authorizationStatus === AuthorizationStatus.NO_AUTH) {
-                  onButtonClick(Routes.SIGN_IN);
+                  history.push(Routes.SIGN_IN);
                 } else {
                   const status = Number(isFavorite);
                   onChangeFavoriteStatus({id, status});
@@ -131,7 +133,7 @@ const Main = ({films, isPreviewFilmLoaded, isFilmsLoaded, onLoadPreviewFilm, onL
 
         <GenresList/>
 
-        <MoviesList films={filteredFilms} quantity={quantityFilms}/>
+        <MoviesList quantity={quantityFilms}/>
 
         {getButtonShowMore()}
       </section>
@@ -162,7 +164,6 @@ Main.propTypes = {
   onChangeActiveFilm: PropTypes.func.isRequired,
   previewFilm: PROP_TYPES_PREVIEW_FILM,
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
-  onButtonClick: PropTypes.func.isRequired,
   activeGenre: PropTypes.string.isRequired,
   onChangeFavoriteStatus: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired

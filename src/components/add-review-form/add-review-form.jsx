@@ -4,13 +4,18 @@ import {postReview} from '../../store/api-actions';
 import PropTypes from 'prop-types';
 import {PROP_TYPES_FILM, STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
 import {getActiveFilm} from '../../store/local-state/selectors';
+import {useHistory} from 'react-router-dom';
 
-const AddReviewForm = ({activeFilm, onSubmit, onButtonClick}) => {
+const AddReviewForm = ({activeFilm, onSubmit}) => {
   const {id} = activeFilm;
+
+  const history = useHistory();
+
   const [statusForm, setStatusForm] = useState({
     isDisabled: true,
     isError: false
   });
+
   const [starRating, setStarRating] = useState(StartState.STAR_RATING);
   const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
 
@@ -24,12 +29,12 @@ const AddReviewForm = ({activeFilm, onSubmit, onButtonClick}) => {
     return reviewText.length >= TextLenghtValid.MIN && reviewText.length <= TextLenghtValid.MAX;
   };
 
-  const isRaitingValid = () => {
+  const isRatingValid = () => {
     return starRating !== StartState.STAR_RATING;
   };
 
   const isDataValid = () => {
-    return isTextareaValid() && isRaitingValid();
+    return isTextareaValid() && isRatingValid();
   };
 
   const handleSubmit = (evt) => {
@@ -44,7 +49,7 @@ const AddReviewForm = ({activeFilm, onSubmit, onButtonClick}) => {
       reviewText
     })
     .then(() => {
-      onButtonClick(`/films/${id}`);
+      history.push(`/films/${id}`);
     })
     .catch(() => {
       setStatusForm({
@@ -85,8 +90,7 @@ const AddReviewForm = ({activeFilm, onSubmit, onButtonClick}) => {
 
 AddReviewForm.propTypes = {
   activeFilm: PROP_TYPES_FILM,
-  onSubmit: PropTypes.func.isRequired,
-  onButtonClick: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({

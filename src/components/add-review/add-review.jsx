@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import {getAuthorizationStatus} from '../../store/user/selectors';
 import {logout} from '../../store/api-actions';
 
-const AddReview = ({activeFilm, onButtonClick, authorizationStatus, onLogout}) => {
+const AddReview = ({activeFilm, authorizationStatus, onLogout}) => {
   const {name, posterImage, backgroundImage} = activeFilm;
 
   const getUserElement = (status) => {
@@ -60,7 +60,7 @@ const AddReview = ({activeFilm, onButtonClick, authorizationStatus, onLogout}) =
     </div>
 
     <div className="add-review">
-      <AddReviewForm onButtonClick={onButtonClick}></AddReviewForm>
+      <AddReviewForm></AddReviewForm>
     </div>
 
   </section>;
@@ -68,7 +68,6 @@ const AddReview = ({activeFilm, onButtonClick, authorizationStatus, onLogout}) =
 
 AddReview.propTypes = {
   activeFilm: PROP_TYPES_FILM,
-  onButtonClick: PropTypes.func.isRequired,
   authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
   onLogout: PropTypes.func.isRequired
 };

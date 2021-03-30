@@ -1,13 +1,13 @@
 import React from 'react';
 import {PROP_TYPES_FILM} from '../../const';
-import {getRaitingText} from '../../utils/common';
+import {getRatingText} from '../../utils/common';
 
 const MovieOverview = ({film}) => {
   const {rating, scoresCount, description, director, starring} = film;
   return <><div className="movie-rating">
     <div className="movie-rating__score">{rating}</div>
     <p className="movie-rating__meta">
-      <span className="movie-rating__level">{getRaitingText(rating)}</span>
+      <span className="movie-rating__level">{getRatingText(rating)}</span>
       <span className="movie-rating__count">{scoresCount} ratings</span>
     </p>
   </div>

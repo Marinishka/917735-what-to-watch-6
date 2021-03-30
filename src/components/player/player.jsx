@@ -4,9 +4,12 @@ import VideoPlayer from '../video-player/video-player';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getActiveFilm} from '../../store/local-state/selectors';
+import {useHistory} from 'react-router-dom';
 
-const Player = ({activeFilm, onExitClick}) => {
+const Player = ({activeFilm}) => {
   const {videoLink, posterImage, runTime, name} = activeFilm;
+
+  const history = useHistory();
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -45,7 +48,7 @@ const Player = ({activeFilm, onExitClick}) => {
   return <div className="player" ref={playerRef}>
     <VideoPlayer isMuted={false} isPlaying={isPlaying} src={videoLink} posterImage={posterImage} name={name} defaultCurrentTime={currentTime} updateCurrentTime={updateCurrentTime} setFullDuration={setFullDuration}/>
     <button type="button" className="player__exit" onClick={() => {
-      onExitClick();
+      history.goBack();
     }}>Exit</button>
     <div className="player__controls">
       <div className="player__controls-row">
