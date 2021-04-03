@@ -1,12 +1,11 @@
 import React, {useState, useRef} from 'react';
-import {PROP_TYPES_FILM, UNIT_OF_TIME} from '../../const';
+import {UNIT_OF_TIME} from '../../const';
 import VideoPlayer from '../video-player/video-player';
-import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import {getActiveFilm} from '../../store/local-state/selectors';
 import {useHistory} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
-const Player = ({activeFilm}) => {
+const Player = () => {
+  const {activeFilm} = useSelector((state) => state.LOCAL);
   const {videoLink, posterImage, runTime, name} = activeFilm;
 
   const history = useHistory();
@@ -81,15 +80,4 @@ const Player = ({activeFilm}) => {
   </div>;
 };
 
-Player.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  onExitClick: PropTypes.func.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  activeFilm: getActiveFilm(state)
-});
-
-export {Player};
-
-export default connect(mapStateToProps)(Player);
+export default Player;

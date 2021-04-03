@@ -1,5 +1,6 @@
 import {getAllGenres} from "../../utils/common";
-import {ActionType} from "../action";
+import {loadFilms, loadPreviewFilm} from "../action";
+import {createReducer} from '@reduxjs/toolkit';
 
 const initialState = {
   films: [],
@@ -9,24 +10,16 @@ const initialState = {
   isPreviewFilmLoaded: false
 };
 
-const data = (state = initialState, action) => {
-  switch (action.type) {
-    case ActionType.LOAD_FILMS:
-      return {
-        ...state,
-        films: action.payload,
-        isFilmsLoaded: true,
-        allGenres: getAllGenres(action.payload)
-      };
-    case ActionType.LOAD_PREVIEW_FILM:
-      return {
-        ...state,
-        previewFilm: action.payload,
-        isPreviewFilmLoaded: true
-      };
-  }
-
-  return state;
-};
+const data = createReducer(initialState, (builder) => {
+  builder.addCase(loadFilms, (state, action) => {
+    state.isFilmsLoaded = true;
+    state.films = action.payload;
+    state.allGenres = getAllGenres(action.payload);
+  });
+  builder.addCase(loadPreviewFilm, (state, action) => {
+    state.isPreviewFilmLoaded = true;
+    state.previewFilm = action.payload;
+  });
+});
 
 export {data};

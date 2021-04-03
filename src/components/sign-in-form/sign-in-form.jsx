@@ -1,87 +1,67 @@
-import React, {useRef, useState} from 'react';
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import React, {useState} from 'react';
 import {login} from '../../store/api-actions';
+import {useDispatch} from 'react-redux';
 
-const Errors = {
-  BAD_REQUEST: 400,
-  INVALID_LOGIN: `invalid login`
-};
+const SignInForm = () => {
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState(``);
+  const [password, setPassword] = useState(``);
+  const [isDisabled, setDisabled] = useState(false);
 
-const SignInForm = ({onSubmit}) => {
-
-  const loginRef = useRef();
-  const passwordRef = useRef();
-  const [authData, setAuthData] = useState({login: ``, password: ``});
-  const [isValid, setIsValid] = useState({status: false, error: null});
+  const [error, setError] = useState(null);
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    setEmailValid();
-    // if (isValid.status) {
-      onSubmit(authData);
-    // }
-  };
+    if (email.trim().length === 0) {
+      setError(`Login is required`);
+      return;
+    }
 
-  const setEmailValid = () => {
-    setIsValid({
-      status: false,
-      error: Errors.INVALID_LOGIN
+    if (password.trim().length === 0) {
+      setError(`Password is required`);
+      return;
+    }
+
+    if (!email.match(/([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}/)) {
+      setError(`Please enter a valid email address`);
+      return;
+    }
+    setError(null);
+    setDisabled(true);
+    dispatch(login({email, password}))
+    .catch(() => {
+      setDisabled(false);
     });
   };
 
   const getErrorMessage = () => {
-    if (isValid.status) {
-      switch (isValid.error) {
-        case Errors.BAD_REQUEST:
-          return <div className="sign-in__message">
-            <p>We can’t recognize this email <br> and password combination. Please try again.</br></p>
-          </div>;
-        case Errors.INVALID_LOGIN:
-          return <div className="sign-in__message">
-            <p>Please enter a valid email address</p>
-          </div>;
-      }
+    if (error !== null) {
+      return <div className="sign-in__message">
+        <p>{error}</p>
+      </div>;
     }
     return ``;
   };
 
-  return <form action="" className="sign-in__form" onSubmit={(evt) => handleSubmit(evt)}>
+  return <form action="" className="sign-in__form" onSubmit={handleSubmit} noValidate>
     {getErrorMessage()}
     <div className="sign-in__fields">
       <div className="sign-in__field">
-        <input className="sign-in__input" ref={loginRef} type="email" placeholder="Email address" name="user-email" id="user-email"
-          onChange={() => setAuthData({
-            ...authData,
-            login: loginRef.current.value})
+        <input className="sign-in__input" placeholder="Email address" name="email" type="email" id="user-email"
+          onChange={(evt) => setEmail(evt.target.value)
           }/>
         <label className="sign-in__label visually-hidden" htmlFor="user-email">Email address</label>
       </div>
       <div className="sign-in__field">
-        <input className="sign-in__input" ref={passwordRef} type="password" placeholder="Password" name="user-password" id="user-password" onChange={() => setAuthData({
-          ...authData,
-          password: passwordRef.current.value
-        })}/>
+        <input className="sign-in__input" type="password" placeholder="Password" name="user-password" id="user-password" onChange={(evt) => setPassword(evt.target.value)}/>
         <label className="sign-in__label visually-hidden" htmlFor="user-password">Password</label>
       </div>
     </div>
     <div className="sign-in__submit">
-      <button className="sign-in__btn" type="submit" >Sign in</button>
+      <button className="sign-in__btn" type="submit" disabled={isDisabled}>Sign in</button>
     </div>
   </form>;
 };
 
-SignInForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  onSubmit(authData) {
-    return dispatch(login(authData));
-  }
-});
-
-export {SignInForm};
-
-export default connect(null, mapDispatchToProps)(SignInForm);
+export default SignInForm;

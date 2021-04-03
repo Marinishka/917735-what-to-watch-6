@@ -3,13 +3,13 @@ import {PROP_TYPES_FILM} from '../../const';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import VideoPlayer from '../video-player/video-player';
-import {connect} from 'react-redux';
 import {changeGenre, changeActiveFilm} from '../../store/action';
-import {getAllGenres} from '../../store/data/selectors';
-import {getActiveFilm} from '../../store/local-state/selectors';
+import {useDispatch} from 'react-redux';
 
-const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeActiveFilm}) => {
+const MovieItem = ({film, isPlaying, handleFilmMouseIn}) => {
   const {previewVideoLink, name, id, previewImage, genre} = film;
+
+  const dispatch = useDispatch();
 
   let timerId;
   const getSrcVideo = () => {
@@ -32,8 +32,8 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeA
       <Link className="small-movie-card__link" to={`/films/${id}`}
         onClick={() => {
           clearTimeout(timerId);
-          onChangeActiveFilm(film);
-          onChangeGenre(genre);
+          dispatch(changeActiveFilm(film));
+          dispatch(changeGenre(genre));
         }}>
         {`${name}`}
       </Link>
@@ -43,27 +43,8 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, onChangeGenre, onChangeA
 
 MovieItem.propTypes = {
   film: PROP_TYPES_FILM,
-  onChangeActiveFilm: PropTypes.func.isRequired,
   handleFilmMouseIn: PropTypes.func.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
-  onChangeGenre: PropTypes.func.isRequired
+  isPlaying: PropTypes.bool.isRequired
 };
 
-const mapStateToProps = (state) => ({
-  activeGenre: getAllGenres(state),
-  activeFilm: getActiveFilm(state)
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onChangeGenre(genre) {
-    dispatch(changeGenre(genre));
-  },
-  onChangeActiveFilm(activeFilm) {
-    dispatch(changeActiveFilm(activeFilm));
-  }
-}
-);
-
-export {MovieItem};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MovieItem);
+export default MovieItem;

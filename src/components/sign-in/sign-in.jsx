@@ -1,13 +1,17 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {Routes} from '../../const';
-import {SignInForm} from '../sign-in-form/sign-in-form';
+import {resetGenre} from '../../store/action';
+import SignInForm from '../sign-in-form/sign-in-form';
+import {useDispatch} from 'react-redux';
 
 const SignIn = () => {
+  const dispatch = useDispatch();
+
   return <div className="user-page">
     <header className="page-header user-page__head">
       <div className="logo">
-        <Link to={Routes.MAIN} className="logo__link">
+        <Link to={Routes.MAIN} className="logo__link" onClick={() => (dispatch(resetGenre()))}>
           <span className="logo__letter logo__letter--1">W</span>
           <span className="logo__letter logo__letter--2">T</span>
           <span className="logo__letter logo__letter--3">W</span>

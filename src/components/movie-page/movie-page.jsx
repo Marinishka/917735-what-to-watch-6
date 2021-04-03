@@ -1,22 +1,36 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM, QuantityFilmsOnPage, AuthorizationStatus, APIRoutes} from '../../const';
+import {Routes, QuantityFilmsOnPage, AuthorizationStatus} from '../../const';
 import MoviesList from '../movies-list/movies-list';
-import {connect} from 'react-redux';
 import Tabs from '../tabs/tabs';
-import PropTypes from 'prop-types';
-import {getActiveFilm} from '../../store/local-state/selectors';
-import {getAuthorizationStatus} from '../../store/user/selectors';
-import {logout, postFavoriteStatus} from '../../store/api-actions';
-import {useHistory} from 'react-router-dom';
-import useAPI from '../../hooks/useAPI';
+import {fetchActiveFilm, fetchFilmList, logout, postFavoriteStatus} from '../../store/api-actions';
+import {useHistory, useParams} from 'react-router-dom';
 import Loading from '../loading/loading';
-import {adaptFilmToClient} from '../../utils/common';
+import {getFilteredFilms} from '../../utils/common';
+import {useSelector, useDispatch} from 'react-redux';
+import {changeGenre, resetGenre} from '../../store/action';
 
-const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onLogout}) => {
-  const {id} = activeFilm;
+const MoviePage = () => {
 
-  const [film, isLoading] = useAPI(`${APIRoutes.FILMS}/${id}`);
+  const {id} = useParams();
+
+  const dispatch = useDispatch();
+
+  const [isLoading, setLoading] = useState(true);
+
+  const {films} = useSelector((state) => state.DATA);
+
+  useEffect(() => {
+    const actions = [dispatch(fetchActiveFilm(id))];
+    if (films.length === 0) {
+      actions.push(dispatch(fetchFilmList()));
+    }
+    Promise.all(actions).then(() => setLoading(false));
+  }, []);
+
+  const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
+  const {authorizationStatus} = useSelector((state) => state.USER);
+  const history = useHistory();
 
   if (isLoading) {
     return (
@@ -29,16 +43,17 @@ const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onL
     genre,
     released,
     posterImage,
-    isFavorite} = adaptFilmToClient(film);
+    isFavorite} = activeFilm;
 
-  const history = useHistory();
+  dispatch(changeGenre(genre));
+  const filteredFilms = getFilteredFilms(genre, films);
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
       ? <><div className="user-block__avatar">
         <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
       </div>
-      <div onClick={() => (onLogout())}>Sign out</div>
+      <div onClick={() => (dispatch(logout()))}>Sign out</div>
       </>
       : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
   };
@@ -54,7 +69,7 @@ const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onL
 
         <header className="page-header movie-card__head">
           <div className="logo">
-            <Link to={Routes.MAIN} className="logo__link">
+            <Link to={Routes.MAIN} className="logo__link" onClick={() => (dispatch(resetGenre()))}>
               <span className="logo__letter logo__letter--1">W</span>
               <span className="logo__letter logo__letter--2">T</span>
               <span className="logo__letter logo__letter--3">W</span>
@@ -87,8 +102,8 @@ const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onL
                 if (authorizationStatus === AuthorizationStatus.NO_AUTH) {
                   history.push(Routes.SIGN_IN);
                 } else {
-                  const status = Number(isFavorite);
-                  onChangeFavoriteStatus({id, status});
+                  const status = Number(!isFavorite);
+                  dispatch(postFavoriteStatus({id, status}));
                 }
               }}>
                 <svg viewBox="0 0 19 20" width="19" height="20">
@@ -117,12 +132,12 @@ const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onL
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
+        <MoviesList quantity={QuantityFilmsOnPage.MOVIE_PAGE} films={filteredFilms}/>
       </section>
 
       <footer className="page-footer">
         <div className="logo">
-          <Link to={Routes.MAIN} className="logo__link logo__link--light">
+          <Link to={Routes.MAIN} className="logo__link logo__link--light" onClick={() => (dispatch(resetGenre()))}>
             <span className="logo__letter logo__letter--1">W</span>
             <span className="logo__letter logo__letter--2">T</span>
             <span className="logo__letter logo__letter--3">W</span>
@@ -137,27 +152,4 @@ const MoviePage = ({activeFilm, authorizationStatus, onChangeFavoriteStatus, onL
   </React.Fragment>;
 };
 
-MoviePage.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
-  onChangeFavoriteStatus: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  activeFilm: getActiveFilm(state),
-  authorizationStatus: getAuthorizationStatus(state)
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onChangeFavoriteStatus(data) {
-    dispatch(postFavoriteStatus(data));
-  },
-  onLogout() {
-    dispatch(logout());
-  }
-});
-
-export {MoviePage};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MoviePage);
+export default MoviePage;

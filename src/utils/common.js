@@ -16,15 +16,15 @@ export const adaptFilmToClient = (film) => {
         scoresCount: film.scores_count
       }
   );
-  delete film.poster_image;
-  delete film.preview_image;
-  delete film.background_image;
-  delete film.background_color;
-  delete film.video_link;
-  delete film.preview_video_link;
-  delete film.is_favorite;
-  delete film.run_time;
-  delete film.scores_count;
+  delete adaptedFilm.poster_image;
+  delete adaptedFilm.preview_image;
+  delete adaptedFilm.background_image;
+  delete adaptedFilm.background_color;
+  delete adaptedFilm.video_link;
+  delete adaptedFilm.preview_video_link;
+  delete adaptedFilm.is_favorite;
+  delete adaptedFilm.run_time;
+  delete adaptedFilm.scores_count;
   return adaptedFilm;
 };
 

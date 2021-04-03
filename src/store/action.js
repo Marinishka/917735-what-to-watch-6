@@ -1,4 +1,5 @@
 import {INITIAL_GENRE} from '../const';
+import {createAction} from '@reduxjs/toolkit';
 
 export const ActionType = {
   CHANGE_GENRE: `localState/changeGenre`,
@@ -6,35 +7,49 @@ export const ActionType = {
   REQUIRED_AUTHORIZATION: `user/requiredAuthorization`,
   REDIRECT_TO_ROUTE: `localState/redirectToRoute`,
   CHANGE_ACTIVE_FILM: `localState/changeActiveFilm`,
-  LOAD_PREVIEW_FILM: `data/loadPreviewFilm`
+  LOAD_PREVIEW_FILM: `data/loadPreviewFilm`,
+  RESET_GENRE: `localState/resetGenre`,
+  LOAD_ACTIVE_FILM: `localState/loadActiveFilm`
 };
 
-export const changeGenre = (genre = INITIAL_GENRE) => ({
-  type: ActionType.CHANGE_GENRE,
-  payload: genre
+export const changeGenre = createAction(ActionType.CHANGE_GENRE, (genre = INITIAL_GENRE) => {
+  return {
+    payload: genre
+  };
 });
 
-export const loadFilms = (films) => ({
-  type: ActionType.LOAD_FILMS,
-  payload: films
+export const loadFilms = createAction(ActionType.LOAD_FILMS, (films) => {
+  return {
+    payload: films
+  };
 });
 
-export const loadPreviewFilm = (film) => ({
-  type: ActionType.LOAD_PREVIEW_FILM,
-  payload: film
+export const loadPreviewFilm = createAction(ActionType.LOAD_PREVIEW_FILM, (film) => {
+  return {
+    payload: film
+  };
 });
 
-export const requireAuthorization = (status) => ({
-  type: ActionType.REQUIRED_AUTHORIZATION,
-  payload: status
+export const requireAuthorization = createAction(ActionType.REQUIRED_AUTHORIZATION, (status) => {
+  return {
+    payload: status
+  };
 });
 
-export const redirectToRoute = (url) => ({
-  type: ActionType.REDIRECT_TO_ROUTE,
-  payload: url
+export const redirectToRoute = createAction(ActionType.REDIRECT_TO_ROUTE, (url) => {
+  return {
+    payload: url
+  };
 });
 
-export const changeActiveFilm = (activeFilm) => ({
-  type: ActionType.CHANGE_ACTIVE_FILM,
-  payload: activeFilm
+export const changeActiveFilm = createAction(ActionType.CHANGE_ACTIVE_FILM, (activeFilm) => {
+  return {
+    payload: activeFilm
+  };
+});
+
+export const resetGenre = createAction(ActionType.RESET_GENRE, () => {
+  return {
+    payload: INITIAL_GENRE
+  };
 });

@@ -1,13 +1,18 @@
 import React, {Fragment, useState, useEffect} from 'react';
-import {connect} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {postReview} from '../../store/api-actions';
-import PropTypes from 'prop-types';
-import {PROP_TYPES_FILM, STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
-import {getActiveFilm} from '../../store/local-state/selectors';
+import {STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
 import {useHistory} from 'react-router-dom';
 
-const AddReviewForm = ({activeFilm, onSubmit}) => {
+const AddReviewForm = () => {
+  const {activeFilm} = useSelector((state) => state.LOCAL);
   const {id} = activeFilm;
+
+  const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    return dispatch(postReview(data));
+  };
 
   const history = useHistory();
 
@@ -53,7 +58,7 @@ const AddReviewForm = ({activeFilm, onSubmit}) => {
     })
     .catch(() => {
       setStatusForm({
-        isDisabled: !isDataValid(),
+        isDisabled: false,
         isError: true});
     });
   };
@@ -88,21 +93,4 @@ const AddReviewForm = ({activeFilm, onSubmit}) => {
   </form>;
 };
 
-AddReviewForm.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  onSubmit: PropTypes.func.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  activeFilm: getActiveFilm(state)
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onSubmit(data) {
-    return dispatch(postReview(data));
-  }
-});
-
-export {AddReviewForm};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddReviewForm);
+export default AddReviewForm;

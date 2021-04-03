@@ -20,9 +20,8 @@ const useAPI = (url) => {
       })
       .catch(() => {
         setIsLoading(false);
-        // Дополнительно потребуется обработать ошибку
       });
-  }, [isLoading]);
+  }, []);
 
   return [actualData, isLoading];
 };

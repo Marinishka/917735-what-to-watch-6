@@ -1,26 +1,22 @@
 import {INITIAL_GENRE} from '../../const';
-import {ActionType} from '../action';
+import {changeActiveFilm, changeGenre, resetGenre} from '../action';
+import {createReducer} from '@reduxjs/toolkit';
 
 const initialState = {
   activeGenre: INITIAL_GENRE,
   activeFilm: {}
 };
 
-const localState = (state = initialState, action) => {
-  switch (action.type) {
-    case ActionType.CHANGE_GENRE:
-      return {
-        ...state,
-        activeGenre: action.payload
-      };
-    case ActionType.CHANGE_ACTIVE_FILM:
-      return {
-        ...state,
-        activeFilm: action.payload
-      };
-  }
-
-  return state;
-};
+const localState = createReducer(initialState, (builder) => {
+  builder.addCase(changeGenre, (state, action) => {
+    state.activeGenre = action.payload;
+  });
+  builder.addCase(changeActiveFilm, (state, action) => {
+    state.activeFilm = action.payload;
+  });
+  builder.addCase(resetGenre, (state, action) => {
+    state.activeGenre = action.payload;
+  });
+});
 
 export {localState};

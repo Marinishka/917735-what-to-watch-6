@@ -1,15 +1,23 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM, AuthorizationStatus} from '../../const';
-import {connect} from 'react-redux';
+import {Routes, AuthorizationStatus} from '../../const';
+import {useSelector, useDispatch} from 'react-redux';
 import AddReviewForm from '../add-review-form/add-review-form';
-import {getActiveFilm} from '../../store/local-state/selectors';
-import PropTypes from 'prop-types';
-import {getAuthorizationStatus} from '../../store/user/selectors';
 import {logout} from '../../store/api-actions';
+import {resetGenre} from '../../store/action';
 
-const AddReview = ({activeFilm, authorizationStatus, onLogout}) => {
+const AddReview = () => {
+  const {activeFilm} = useSelector((state) => state.LOCAL);
+
+  const {authorizationStatus} = useSelector((state) => state.USER);
+
   const {name, posterImage, backgroundImage} = activeFilm;
+
+  const dispatch = useDispatch();
+
+  const onLogout = () => {
+    dispatch(logout());
+  };
 
   const getUserElement = (status) => {
     return status === AuthorizationStatus.AUTH
@@ -31,7 +39,7 @@ const AddReview = ({activeFilm, authorizationStatus, onLogout}) => {
 
       <header className="page-header">
         <div className="logo">
-          <Link to={Routes.MAIN} className="logo__link">
+          <Link to={Routes.MAIN} className="logo__link" onClick={() => (dispatch(resetGenre()))}>
             <span className="logo__letter logo__letter--1">W</span>
             <span className="logo__letter logo__letter--2">T</span>
             <span className="logo__letter logo__letter--3">W</span>
@@ -66,23 +74,4 @@ const AddReview = ({activeFilm, authorizationStatus, onLogout}) => {
   </section>;
 };
 
-AddReview.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  authorizationStatus: PropTypes.oneOf([AuthorizationStatus.AUTH, AuthorizationStatus.NO_AUTH]),
-  onLogout: PropTypes.func.isRequired
-};
-
-const mapStateToProps = (state) => ({
-  activeFilm: getActiveFilm(state),
-  authorizationStatus: getAuthorizationStatus(state)
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onLogout() {
-    dispatch(logout());
-  }
-});
-
-export {AddReview};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddReview);
+export default AddReview;
