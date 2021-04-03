@@ -5,7 +5,7 @@ import {useHistory} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 
 const Player = () => {
-  const {activeFilm} = useSelector((state) => state.LOCAL);
+  const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
   const {videoLink, posterImage, runTime, name} = activeFilm;
 
   const history = useHistory();

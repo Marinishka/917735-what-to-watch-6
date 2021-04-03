@@ -1,33 +1,17 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, AuthorizationStatus} from '../../const';
+import {Routes} from '../../const';
 import {useSelector, useDispatch} from 'react-redux';
 import AddReviewForm from '../add-review-form/add-review-form';
-import {logout} from '../../store/api-actions';
 import {resetGenre} from '../../store/action';
+import UserElement from '../user-element/user-element';
 
 const AddReview = () => {
-  const {activeFilm} = useSelector((state) => state.LOCAL);
-
-  const {authorizationStatus} = useSelector((state) => state.USER);
-
-  const {name, posterImage, backgroundImage} = activeFilm;
-
   const dispatch = useDispatch();
 
-  const onLogout = () => {
-    dispatch(logout());
-  };
+  const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
 
-  const getUserElement = (status) => {
-    return status === AuthorizationStatus.AUTH
-      ? <><div className="user-block__avatar">
-        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
-      </div>
-      <div onClick={() => (onLogout())}>Sign out</div>
-      </>
-      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
-  };
+  const {name, posterImage, backgroundImage} = activeFilm;
 
   return <section className="movie-card movie-card--full">
     <div className="movie-card__header">
@@ -58,7 +42,7 @@ const AddReview = () => {
         </nav>
 
         <div className="user-block">
-          {getUserElement(authorizationStatus)}
+          <UserElement/>
         </div>
       </header>
 

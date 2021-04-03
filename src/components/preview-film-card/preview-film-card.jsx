@@ -1,29 +1,19 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import {AuthorizationStatus, Routes} from '../../const';
 import {useHistory} from 'react-router-dom';
 import {changeActiveFilm} from '../../store/action';
-import {logout, postFavoriteStatus} from '../../store/api-actions';
+import {postFavoriteStatus} from '../../store/api-actions';
 import {useSelector, useDispatch} from 'react-redux';
+import UserElement from '../user-element/user-element';
 
 const PreviewFilmCard = () => {
-  const {previewFilm} = useSelector((state) => state.DATA);
-  const {authorizationStatus} = useSelector((state) => state.USER);
+  const previewFilm = useSelector((state) => state.DATA.previewFilm);
+  const authorizationStatus = useSelector((state) => state.USER.authorizationStatus);
   const {backgroundImage, name, posterImage, genre, released, isFavorite, id} = previewFilm;
 
   const dispatch = useDispatch();
 
   const history = useHistory();
-
-  const getUserElement = (status) => {
-    return status === AuthorizationStatus.AUTH
-      ? <><div className="user-block__avatar">
-        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
-      </div>
-      <div onClick={() => (dispatch(logout()))}>Sign out</div>
-      </>
-      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
-  };
 
   return <section className="movie-card">
     <div className="movie-card__bg">
@@ -42,7 +32,7 @@ const PreviewFilmCard = () => {
       </div>
 
       <div className="user-block">
-        {getUserElement(authorizationStatus)}
+        <UserElement/>
       </div>
     </header>
 

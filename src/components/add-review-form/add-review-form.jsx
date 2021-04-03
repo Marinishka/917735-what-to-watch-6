@@ -5,7 +5,7 @@ import {STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
 import {useHistory} from 'react-router-dom';
 
 const AddReviewForm = () => {
-  const {activeFilm} = useSelector((state) => state.LOCAL);
+  const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
   const {id} = activeFilm;
 
   const dispatch = useDispatch();

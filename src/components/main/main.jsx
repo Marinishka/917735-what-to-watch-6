@@ -6,7 +6,8 @@ import {fetchFilmList, fetchPreviewFilm} from '../../store/api-actions';
 import {useSelector, useDispatch} from 'react-redux';
 
 const Main = () => {
-  const {isFilmsLoaded, isPreviewFilmLoaded} = useSelector((state) => state.DATA);
+  const isFilmsLoaded = useSelector((state) => state.DATA.isFilmsLoaded);
+  const isPreviewFilmLoaded = useSelector((state) => state.DATA.isPreviewFilmLoaded);
   const dispatch = useDispatch();
 
   useEffect(() => {

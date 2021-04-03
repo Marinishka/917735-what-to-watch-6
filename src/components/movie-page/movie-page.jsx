@@ -3,12 +3,13 @@ import {Link} from 'react-router-dom';
 import {Routes, QuantityFilmsOnPage, AuthorizationStatus} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import Tabs from '../tabs/tabs';
-import {fetchActiveFilm, fetchFilmList, logout, postFavoriteStatus} from '../../store/api-actions';
+import {fetchActiveFilm, fetchFilmList, postFavoriteStatus} from '../../store/api-actions';
 import {useHistory, useParams} from 'react-router-dom';
 import Loading from '../loading/loading';
 import {getFilteredFilms} from '../../utils/common';
 import {useSelector, useDispatch} from 'react-redux';
 import {changeGenre, resetGenre} from '../../store/action';
+import UserElement from '../user-element/user-element';
 
 const MoviePage = () => {
 
@@ -18,7 +19,7 @@ const MoviePage = () => {
 
   const [isLoading, setLoading] = useState(true);
 
-  const {films} = useSelector((state) => state.DATA);
+  const films = useSelector((state) => state.DATA.films);
 
   useEffect(() => {
     const actions = [dispatch(fetchActiveFilm(id))];
@@ -29,7 +30,7 @@ const MoviePage = () => {
   }, []);
 
   const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
-  const {authorizationStatus} = useSelector((state) => state.USER);
+  const authorizationStatus = useSelector((state) => state.USER.authorizationStatus);
   const history = useHistory();
 
   if (isLoading) {
@@ -47,16 +48,6 @@ const MoviePage = () => {
 
   dispatch(changeGenre(genre));
   const filteredFilms = getFilteredFilms(genre, films);
-
-  const getUserElement = (status) => {
-    return status === AuthorizationStatus.AUTH
-      ? <><div className="user-block__avatar">
-        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
-      </div>
-      <div onClick={() => (dispatch(logout()))}>Sign out</div>
-      </>
-      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
-  };
 
   return <React.Fragment>
     <section className="movie-card movie-card--full">
@@ -77,7 +68,7 @@ const MoviePage = () => {
           </div>
 
           <div className="user-block">
-            {getUserElement(authorizationStatus)}
+            <UserElement/>
           </div>
         </header>
 
@@ -91,7 +82,7 @@ const MoviePage = () => {
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                history.push(`/player/${id}`);
+                history.push(`${Routes.PLAYER}/${id}`);
               }}>
                 <svg viewBox="0 0 19 19" width="19" height="19">
                   <use xlinkHref="#play-s"></use>
@@ -111,7 +102,7 @@ const MoviePage = () => {
                 </svg>
                 <span>My list</span>
               </button>
-              {authorizationStatus === AuthorizationStatus.AUTH ? <Link to={`/films/${id}/review`} className="btn movie-card__button">Add review</Link> : ``}
+              {authorizationStatus === AuthorizationStatus.AUTH ? <Link to={`${id}/review`} className="btn movie-card__button">Add review</Link> : ``}
             </div>
           </div>
         </div>

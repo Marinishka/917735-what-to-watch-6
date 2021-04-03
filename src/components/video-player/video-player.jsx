@@ -13,6 +13,9 @@ const VideoPlayer = ({isMuted, isPlaying, src, posterImage, name, defaultCurrent
         updateCurrentTime(time);
       }
     };
+    return () => {
+      videoRef.current.ontimeupdate = null;
+    };
   }, [time]);
 
   useEffect(() => {
