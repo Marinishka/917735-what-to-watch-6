@@ -1,11 +1,14 @@
 import React, {useState, useRef} from 'react';
-import {PROP_TYPES_FILM, UNIT_OF_TIME} from '../../const';
+import {UNIT_OF_TIME} from '../../const';
 import VideoPlayer from '../video-player/video-player';
-import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
+import {useHistory} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
-const Player = ({activeFilm, onExitClick}) => {
+const Player = () => {
+  const {activeFilm} = useSelector((state) => state.LOCAL);
   const {videoLink, posterImage, runTime, name} = activeFilm;
+
+  const history = useHistory();
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
@@ -44,7 +47,7 @@ const Player = ({activeFilm, onExitClick}) => {
   return <div className="player" ref={playerRef}>
     <VideoPlayer isMuted={false} isPlaying={isPlaying} src={videoLink} posterImage={posterImage} name={name} defaultCurrentTime={currentTime} updateCurrentTime={updateCurrentTime} setFullDuration={setFullDuration}/>
     <button type="button" className="player__exit" onClick={() => {
-      onExitClick();
+      history.goBack();
     }}>Exit</button>
     <div className="player__controls">
       <div className="player__controls-row">
@@ -77,15 +80,4 @@ const Player = ({activeFilm, onExitClick}) => {
   </div>;
 };
 
-Player.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  onExitClick: PropTypes.func.isRequired
-};
-
-const mapStateToProps = ({activeFilm}) => ({
-  activeFilm
-});
-
-export {Player};
-
-export default connect(mapStateToProps)(Player);
+export default Player;

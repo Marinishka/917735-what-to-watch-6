@@ -20,7 +20,7 @@ const VideoPlayer = ({isMuted, isPlaying, src, posterImage, name, defaultCurrent
     if (setFullDuration) {
       videoRef.current.onloadeddata = () => setFullDuration(videoRef.current.duration);
     }
-  }, [src]);
+  }, [isMuted]);
 
   useEffect(() => {
     if (isPlaying) {

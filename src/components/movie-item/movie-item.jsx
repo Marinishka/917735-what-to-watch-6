@@ -3,11 +3,13 @@ import {PROP_TYPES_FILM} from '../../const';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import VideoPlayer from '../video-player/video-player';
-import {connect} from 'react-redux';
-import {ActionCreator} from '../../store/action';
+import {changeGenre, changeActiveFilm} from '../../store/action';
+import {useDispatch} from 'react-redux';
 
-const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiveFilm}) => {
+const MovieItem = ({film, isPlaying, handleFilmMouseIn}) => {
   const {previewVideoLink, name, id, previewImage, genre} = film;
+
+  const dispatch = useDispatch();
 
   let timerId;
   const getSrcVideo = () => {
@@ -16,10 +18,11 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
 
   return <article className="small-movie-card catalog__movies-card"
     onMouseOver={() => {
+      clearTimeout(timerId);
       timerId = setTimeout(handleFilmMouseIn, 1000, id);
     }}
     onMouseLeave={() => {
-      clearInterval(timerId);
+      clearTimeout(timerId);
       handleFilmMouseIn(null);
     }}>
     <div className="small-movie-card__image">
@@ -28,8 +31,9 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
     <h3 className="small-movie-card__title">
       <Link className="small-movie-card__link" to={`/films/${id}`}
         onClick={() => {
-          changeActiveFilm(film);
-          changeGenre(genre);
+          clearTimeout(timerId);
+          dispatch(changeActiveFilm(film));
+          dispatch(changeGenre(genre));
         }}>
         {`${name}`}
       </Link>
@@ -39,27 +43,8 @@ const MovieItem = ({film, isPlaying, handleFilmMouseIn, changeGenre, changeActiv
 
 MovieItem.propTypes = {
   film: PROP_TYPES_FILM,
-  changeActiveFilm: PropTypes.func.isRequired,
   handleFilmMouseIn: PropTypes.func.isRequired,
-  isPlaying: PropTypes.bool.isRequired,
-  changeGenre: PropTypes.func.isRequired
+  isPlaying: PropTypes.bool.isRequired
 };
 
-const mapStateToProps = ({activeGenre, activeFilm}) => ({
-  activeGenre,
-  activeFilm
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  changeGenre(genre) {
-    dispatch(ActionCreator.chengeGenre(genre));
-  },
-  changeActiveFilm(activeFilm) {
-    dispatch(ActionCreator.changeActiveFilm(activeFilm));
-  }
-}
-);
-
-export {MovieItem};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MovieItem);
+export default MovieItem;

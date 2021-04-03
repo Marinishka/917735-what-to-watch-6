@@ -1,32 +1,55 @@
 import {INITIAL_GENRE} from '../const';
+import {createAction} from '@reduxjs/toolkit';
 
 export const ActionType = {
-  CHANGE_GENRE: `genre/change`,
-  LOAD_FILMS: `films/load`,
+  CHANGE_GENRE: `localState/changeGenre`,
+  LOAD_FILMS: `data/loadFilms`,
   REQUIRED_AUTHORIZATION: `user/requiredAuthorization`,
-  REDIRECT_TO_ROUTE: `films/redirectToRoute`,
-  CHANGE_ACTIVE_FILM: `film/change`
+  REDIRECT_TO_ROUTE: `localState/redirectToRoute`,
+  CHANGE_ACTIVE_FILM: `localState/changeActiveFilm`,
+  LOAD_PREVIEW_FILM: `data/loadPreviewFilm`,
+  RESET_GENRE: `localState/resetGenre`,
+  LOAD_ACTIVE_FILM: `localState/loadActiveFilm`
 };
 
-export const ActionCreator = {
-  chengeGenre: (genre = INITIAL_GENRE) => ({
-    type: ActionType.CHANGE_GENRE,
+export const changeGenre = createAction(ActionType.CHANGE_GENRE, (genre = INITIAL_GENRE) => {
+  return {
     payload: genre
-  }),
-  loadFilms: (films) => ({
-    type: ActionType.LOAD_FILMS,
+  };
+});
+
+export const loadFilms = createAction(ActionType.LOAD_FILMS, (films) => {
+  return {
     payload: films
-  }),
-  requireAuthorization: (status) => ({
-    type: ActionType.REQUIRED_AUTHORIZATION,
+  };
+});
+
+export const loadPreviewFilm = createAction(ActionType.LOAD_PREVIEW_FILM, (film) => {
+  return {
+    payload: film
+  };
+});
+
+export const requireAuthorization = createAction(ActionType.REQUIRED_AUTHORIZATION, (status) => {
+  return {
     payload: status
-  }),
-  redirectToRoute: (url) => ({
-    type: ActionType.REDIRECT_TO_ROUTE,
+  };
+});
+
+export const redirectToRoute = createAction(ActionType.REDIRECT_TO_ROUTE, (url) => {
+  return {
     payload: url
-  }),
-  changeActiveFilm: (activeFilm) => ({
-    type: ActionType.CHANGE_ACTIVE_FILM,
+  };
+});
+
+export const changeActiveFilm = createAction(ActionType.CHANGE_ACTIVE_FILM, (activeFilm) => {
+  return {
     payload: activeFilm
-  })
-};
+  };
+});
+
+export const resetGenre = createAction(ActionType.RESET_GENRE, () => {
+  return {
+    payload: INITIAL_GENRE
+  };
+});

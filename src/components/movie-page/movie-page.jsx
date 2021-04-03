@@ -1,18 +1,62 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM, PROP_TYPES_FILMS, QuantityFilmsOnPage} from '../../const';
+import {Routes, QuantityFilmsOnPage, AuthorizationStatus} from '../../const';
 import MoviesList from '../movies-list/movies-list';
-import {connect} from 'react-redux';
 import Tabs from '../tabs/tabs';
-import PropTypes from 'prop-types';
+import {fetchActiveFilm, fetchFilmList, logout, postFavoriteStatus} from '../../store/api-actions';
+import {useHistory, useParams} from 'react-router-dom';
+import Loading from '../loading/loading';
+import {getFilteredFilms} from '../../utils/common';
+import {useSelector, useDispatch} from 'react-redux';
+import {changeGenre, resetGenre} from '../../store/action';
 
-const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
+const MoviePage = () => {
+
+  const {id} = useParams();
+
+  const dispatch = useDispatch();
+
+  const [isLoading, setLoading] = useState(true);
+
+  const {films} = useSelector((state) => state.DATA);
+
+  useEffect(() => {
+    const actions = [dispatch(fetchActiveFilm(id))];
+    if (films.length === 0) {
+      actions.push(dispatch(fetchFilmList()));
+    }
+    Promise.all(actions).then(() => setLoading(false));
+  }, []);
+
+  const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
+  const {authorizationStatus} = useSelector((state) => state.USER);
+  const history = useHistory();
+
+  if (isLoading) {
+    return (
+      <Loading />
+    );
+  }
+
   const {backgroundImage,
     name,
     genre,
     released,
     posterImage,
-    id} = activeFilm;
+    isFavorite} = activeFilm;
+
+  dispatch(changeGenre(genre));
+  const filteredFilms = getFilteredFilms(genre, films);
+
+  const getUserElement = (status) => {
+    return status === AuthorizationStatus.AUTH
+      ? <><div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      <div onClick={() => (dispatch(logout()))}>Sign out</div>
+      </>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+  };
 
   return <React.Fragment>
     <section className="movie-card movie-card--full">
@@ -25,7 +69,7 @@ const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
 
         <header className="page-header movie-card__head">
           <div className="logo">
-            <Link to={Routes.MAIN} className="logo__link">
+            <Link to={Routes.MAIN} className="logo__link" onClick={() => (dispatch(resetGenre()))}>
               <span className="logo__letter logo__letter--1">W</span>
               <span className="logo__letter logo__letter--2">T</span>
               <span className="logo__letter logo__letter--3">W</span>
@@ -33,9 +77,7 @@ const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
           </div>
 
           <div className="user-block">
-            <div className="user-block__avatar">
-              <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-            </div>
+            {getUserElement(authorizationStatus)}
           </div>
         </header>
 
@@ -49,20 +91,27 @@ const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
 
             <div className="movie-card__buttons">
               <button className="btn btn--play movie-card__button" type="button" onClick={() => {
-                onButtonPlayerClick(`/player/${id}`);
+                history.push(`/player/${id}`);
               }}>
                 <svg viewBox="0 0 19 19" width="19" height="19">
                   <use xlinkHref="#play-s"></use>
                 </svg>
                 <span>Play</span>
               </button>
-              <button className="btn btn--list movie-card__button" type="button">
+              <button className="btn btn--list movie-card__button" type="button" onClick={() => {
+                if (authorizationStatus === AuthorizationStatus.NO_AUTH) {
+                  history.push(Routes.SIGN_IN);
+                } else {
+                  const status = Number(!isFavorite);
+                  dispatch(postFavoriteStatus({id, status}));
+                }
+              }}>
                 <svg viewBox="0 0 19 20" width="19" height="20">
                   <use xlinkHref="#add"></use>
                 </svg>
                 <span>My list</span>
               </button>
-              <Link to={`/films/${id}/review`} className="btn movie-card__button">Add review</Link>
+              {authorizationStatus === AuthorizationStatus.AUTH ? <Link to={`/films/${id}/review`} className="btn movie-card__button">Add review</Link> : ``}
             </div>
           </div>
         </div>
@@ -83,12 +132,12 @@ const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
       <section className="catalog catalog--like-this">
         <h2 className="catalog__title">More like this</h2>
 
-        <MoviesList films={films} quantity={QuantityFilmsOnPage.MOVIE_PAGE}/>
+        <MoviesList quantity={QuantityFilmsOnPage.MOVIE_PAGE} films={filteredFilms}/>
       </section>
 
       <footer className="page-footer">
         <div className="logo">
-          <Link to={Routes.MAIN} className="logo__link logo__link--light">
+          <Link to={Routes.MAIN} className="logo__link logo__link--light" onClick={() => (dispatch(resetGenre()))}>
             <span className="logo__letter logo__letter--1">W</span>
             <span className="logo__letter logo__letter--2">T</span>
             <span className="logo__letter logo__letter--3">W</span>
@@ -103,17 +152,4 @@ const MoviePage = ({activeFilm, films, onButtonPlayerClick}) => {
   </React.Fragment>;
 };
 
-MoviePage.propTypes = {
-  activeFilm: PROP_TYPES_FILM,
-  films: PROP_TYPES_FILMS,
-  onButtonPlayerClick: PropTypes.func.isRequired
-};
-
-const mapStateToProps = ({films, activeFilm}) => ({
-  films,
-  activeFilm
-});
-
-export {MoviePage};
-
-export default connect(mapStateToProps)(MoviePage);
+export default MoviePage;

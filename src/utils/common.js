@@ -16,15 +16,15 @@ export const adaptFilmToClient = (film) => {
         scoresCount: film.scores_count
       }
   );
-  delete film.poster_image;
-  delete film.preview_image;
-  delete film.background_image;
-  delete film.background_color;
-  delete film.video_link;
-  delete film.preview_video_link;
-  delete film.is_favorite;
-  delete film.run_time;
-  delete film.scores_count;
+  delete adaptedFilm.poster_image;
+  delete adaptedFilm.preview_image;
+  delete adaptedFilm.background_image;
+  delete adaptedFilm.background_color;
+  delete adaptedFilm.video_link;
+  delete adaptedFilm.preview_video_link;
+  delete adaptedFilm.is_favorite;
+  delete adaptedFilm.run_time;
+  delete adaptedFilm.scores_count;
   return adaptedFilm;
 };
 
@@ -49,11 +49,11 @@ export const getFilteredFilms = (genre, films) => {
   return films;
 };
 
-export const getRaitingText = (rating) => {
-  const raitingLevel = RatingLevels.filter((level) => {
+export const getRatingText = (rating) => {
+  const ratingLevel = RatingLevels.filter((level) => {
     return rating >= level.MIN_LEVEL || rating < level.MAX_LEVEL;
   });
-  return raitingLevel.TEXT;
+  return ratingLevel.TEXT;
 };
 
 export const getTimeInHourAndMinutes = (timeInMinutes) => {

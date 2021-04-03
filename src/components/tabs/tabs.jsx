@@ -10,7 +10,7 @@ const getActiveElement = (activeTab, film) => {
     case TabsTitles.OVERVIEW:
       return <MovieOverview film={film}></MovieOverview>;
     case TabsTitles.REVIEWS:
-      return <MovieReviews></MovieReviews>;
+      return <MovieReviews id={film.id}></MovieReviews>;
     case TabsTitles.DETAILS:
       return <MovieDetails film={film}></MovieDetails>;
     default: return <MovieOverview film={film}></MovieOverview>;

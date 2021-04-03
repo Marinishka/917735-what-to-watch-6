@@ -1,18 +1,34 @@
-import React, {Fragment, useState} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, PROP_TYPES_FILM} from '../../const';
-import {connect} from 'react-redux';
+import {Routes, AuthorizationStatus} from '../../const';
+import {useSelector, useDispatch} from 'react-redux';
+import AddReviewForm from '../add-review-form/add-review-form';
+import {logout} from '../../store/api-actions';
+import {resetGenre} from '../../store/action';
 
-const STARS_QUANTITY = 10;
-const StartState = {
-  STAR_RATING: 0,
-  REVIEW_TEXT: ``
-};
+const AddReview = () => {
+  const {activeFilm} = useSelector((state) => state.LOCAL);
 
-const AddReview = ({activeFilm}) => {
-  const [, setStarRating] = useState(StartState.STAR_RATING);
-  const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
+  const {authorizationStatus} = useSelector((state) => state.USER);
+
   const {name, posterImage, backgroundImage} = activeFilm;
+
+  const dispatch = useDispatch();
+
+  const onLogout = () => {
+    dispatch(logout());
+  };
+
+  const getUserElement = (status) => {
+    return status === AuthorizationStatus.AUTH
+      ? <><div className="user-block__avatar">
+        <Link to={Routes.MY_LIST}><img src="img/avatar.jpg" alt="User avatar" width="63" height="63" /></Link>
+      </div>
+      <div onClick={() => (onLogout())}>Sign out</div>
+      </>
+      : <Link to={Routes.SIGN_IN} className="user-block__link">Sign in</Link>;
+  };
+
   return <section className="movie-card movie-card--full">
     <div className="movie-card__header">
       <div className="movie-card__bg">
@@ -23,7 +39,7 @@ const AddReview = ({activeFilm}) => {
 
       <header className="page-header">
         <div className="logo">
-          <Link to={Routes.MAIN} className="logo__link">
+          <Link to={Routes.MAIN} className="logo__link" onClick={() => (dispatch(resetGenre()))}>
             <span className="logo__letter logo__letter--1">W</span>
             <span className="logo__letter logo__letter--2">T</span>
             <span className="logo__letter logo__letter--3">W</span>
@@ -42,9 +58,7 @@ const AddReview = ({activeFilm}) => {
         </nav>
 
         <div className="user-block">
-          <div className="user-block__avatar">
-            <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-          </div>
+          {getUserElement(authorizationStatus)}
         </div>
       </header>
 
@@ -54,48 +68,10 @@ const AddReview = ({activeFilm}) => {
     </div>
 
     <div className="add-review">
-      <form action="#" className="add-review__form" onSubmit={(evt) => {
-        evt.preventDefault();
-      }}>
-        <div className="rating">
-          <div className="rating__stars">
-            {new Array(STARS_QUANTITY).fill(null).map((_, index) => {
-              const starNumber = index + 1;
-              return (
-                <Fragment key={starNumber}>
-                  <input className="rating__input" id={`star-${starNumber}`} type="radio" name="rating" value={starNumber} onChange={({target}) => {
-                    setStarRating(target.value);
-                  }}/>
-                  <label className="rating__label" htmlFor={`star-${starNumber}`}>Rating {starNumber}</label>
-                </Fragment>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="add-review__text">
-          <textarea className="add-review__textarea" name="review-text" id="review-text" placeholder="Review text" value={reviewText} onChange={({target}) => {
-            setReviewText(target.value);
-          }}/>
-          <div className="add-review__submit">
-            <button className="add-review__btn" type="submit">Post</button>
-          </div>
-
-        </div>
-      </form>
+      <AddReviewForm></AddReviewForm>
     </div>
 
   </section>;
 };
 
-AddReview.propTypes = {
-  activeFilm: PROP_TYPES_FILM
-};
-
-const mapStateToProps = ({activeFilm}) => ({
-  activeFilm
-});
-
-export {AddReview};
-
-export default connect(mapStateToProps)(AddReview);
+export default AddReview;
