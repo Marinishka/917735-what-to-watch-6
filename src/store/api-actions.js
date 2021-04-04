@@ -36,7 +36,6 @@ export const logout = () => (dispatch, _getState, api) => {
 
 export const postReview = ({id, starRating: rating, reviewText: comment}) => (dispatch, _getState, api) => (
   api.post(`${APIRoutes.COMMENTS}/${id}`, {rating, comment})
-  .then(() => dispatch(redirectToRoute(Routes.MOVIE_PAGE)))
 );
 
 export const postFavoriteStatus = ({id, status}) => (dispatch, _getState, api) => (
