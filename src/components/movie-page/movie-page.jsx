@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, QuantityFilmsOnPage, AuthorizationStatus} from '../../const';
+import {Routes, QuantityFilmsOnPage, AuthorizationStatus, StatusCode} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import Tabs from '../tabs/tabs';
 import {fetchActiveFilm, fetchFilmList, postFavoriteStatus} from '../../store/api-actions';
@@ -26,7 +26,11 @@ const MoviePage = () => {
     if (films.length === 0) {
       actions.push(dispatch(fetchFilmList()));
     }
-    Promise.all(actions).then(() => setLoading(false));
+    Promise.all(actions).then(() => setLoading(false)).catch((error) => {
+      if (error.response.status === StatusCode.NOT_FOUND) {
+        history.push(Routes.NOT_FOUND);
+      }
+    });
   }, []);
 
   const activeFilm = useSelector((state) => state.LOCAL.activeFilm);
@@ -97,9 +101,13 @@ const MoviePage = () => {
                   dispatch(postFavoriteStatus({id, status}));
                 }
               }}>
-                <svg viewBox="0 0 19 20" width="19" height="20">
-                  <use xlinkHref="#add"></use>
-                </svg>
+                {isFavorite
+                  ? <svg viewBox="0 0 18 14" width="18" height="14">
+                    <use xlinkHref="#in-list"></use>
+                  </svg>
+                  : <svg viewBox="0 0 19 20" width="19" height="20">
+                    <use xlinkHref="#add"></use>
+                  </svg>}
                 <span>My list</span>
               </button>
               {authorizationStatus === AuthorizationStatus.AUTH ? <Link to={`${id}/review`} className="btn movie-card__button">Add review</Link> : ``}

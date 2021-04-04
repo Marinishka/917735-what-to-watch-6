@@ -39,6 +39,12 @@ export const postReview = ({id, starRating: rating, reviewText: comment}) => (di
   .then(() => dispatch(redirectToRoute(Routes.MOVIE_PAGE)))
 );
 
-export const postFavoriteStatus = ({id, status}) => (_, _getState, api) => (
-  api.post(`${APIRoutes.FAVORITE_MARK}/${id}/${status}`)
+export const postFavoriteStatus = ({id, status}) => (dispatch, _getState, api) => (
+  api.post(`${APIRoutes.FAVORITE_MARK}/${id}/${status}`).then(({data}) => {
+    if (id === 1) {
+      dispatch(loadPreviewFilm(adaptFilmToClient(data)));
+    } else {
+      dispatch(changeActiveFilm(adaptFilmToClient(data)));
+    }
+  })
 );

@@ -11,6 +11,11 @@ export const REVIEWS_ROWS = 3;
 export const INITIAL_GENRE = `All genres`;
 
 export const STARS_QUANTITY = 10;
+
+export const StatusCode = {
+  NOT_FOUND: 404
+};
+
 export const StartState = {
   STAR_RATING: null,
   REVIEW_TEXT: ``
@@ -42,7 +47,8 @@ export const Routes = {
   MY_LIST: `/mylist`,
   MOVIE_PAGE: `/films/:id?`,
   ADD_REVIEW: `/films/:id/review`,
-  PLAYER: `/player/:id?`
+  PLAYER: `/player/:id?`,
+  NOT_FOUND: `/not_found`
 };
 
 export const AuthorizationStatus = {

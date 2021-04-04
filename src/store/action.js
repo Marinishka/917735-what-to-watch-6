@@ -9,7 +9,8 @@ export const ActionType = {
   CHANGE_ACTIVE_FILM: `localState/changeActiveFilm`,
   LOAD_PREVIEW_FILM: `data/loadPreviewFilm`,
   RESET_GENRE: `localState/resetGenre`,
-  LOAD_ACTIVE_FILM: `localState/loadActiveFilm`
+  LOAD_ACTIVE_FILM: `localState/loadActiveFilm`,
+  UPDATE_FILM: `data/updateFilm`
 };
 
 export const changeGenre = createAction(ActionType.CHANGE_GENRE, (genre = INITIAL_GENRE) => {

@@ -40,7 +40,7 @@ const App = () => {
           return <Player/>;
         }}/>
         <Route>
-          <NotFound/>
+          <NotFound path={Routes.NOT_FOUND}/>
         </Route>
       </Switch>
     </BrowserRouter>
