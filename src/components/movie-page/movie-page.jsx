@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {Routes, QuantityFilmsOnPage, AuthorizationStatus, StatusCode} from '../../const';
+import {Routes, QuantityFilmsOnPage, AuthorizationStatus, StatusCodes, CONNECTION_ERROR} from '../../const';
 import MoviesList from '../movies-list/movies-list';
 import Tabs from '../tabs/tabs';
 import {fetchActiveFilm, fetchFilmList, postFavoriteStatus} from '../../store/api-actions';
@@ -10,6 +10,7 @@ import {getFilteredFilms} from '../../utils/common';
 import {useSelector, useDispatch} from 'react-redux';
 import {changeGenre, resetGenre} from '../../store/action';
 import UserElement from '../user-element/user-element';
+import ErrorPage from '../error-page/error-page';
 
 const MoviePage = () => {
 
@@ -21,15 +22,27 @@ const MoviePage = () => {
 
   const films = useSelector((state) => state.DATA.films);
 
+  const getResponseErrorMessage = (err) => {
+    let message = `We don't know what happened`;
+    if (err.message === CONNECTION_ERROR) {
+      message = `Internet connection error. Check the connection.`;
+    } else if (err.response.status === StatusCodes.BAD_REQUEST) {
+      message = `Invalid request sent.`;
+    } else if (err.response.status >= StatusCodes.SERVER_ERROR_FIRST && err.response.status <= StatusCodes.SERVER_ERROR_LAST) {
+      message = `We have something broken on server. Try again later.`;
+    } else if (err.response.status === StatusCodes.NOT_FOUND) {
+      history.push(Routes.NOT_FOUND);
+    }
+    return message;
+  };
+
   useEffect(() => {
     const actions = [dispatch(fetchActiveFilm(id))];
     if (films.length === 0) {
       actions.push(dispatch(fetchFilmList()));
     }
-    Promise.all(actions).then(() => setLoading(false)).catch((error) => {
-      if (error.response.status === StatusCode.NOT_FOUND) {
-        history.push(Routes.NOT_FOUND);
-      }
+    Promise.all(actions).then(() => setLoading(false)).catch((err) => {
+      return <ErrorPage message={getResponseErrorMessage(err)}/>;
     });
   }, []);
 

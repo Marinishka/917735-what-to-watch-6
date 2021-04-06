@@ -22,11 +22,13 @@ const store = configureStore({
     }).concat(redirect)
 });
 
-store.dispatch(checkAuth());
+store.dispatch(checkAuth()).finally(() => {
+  ReactDOM.render(
+      <Provider store={store}>
+        <App/>
+      </Provider>,
+      document.querySelector(`#root`)
+  );
+});
 
-ReactDOM.render(
-    <Provider store={store}>
-      <App/>
-    </Provider>,
-    document.querySelector(`#root`)
-);
+

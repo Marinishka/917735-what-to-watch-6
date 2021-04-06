@@ -12,9 +12,15 @@ export const INITIAL_GENRE = `All genres`;
 
 export const STARS_QUANTITY = 10;
 
-export const StatusCode = {
-  NOT_FOUND: 404
+export const StatusCodes = {
+  OK: 200,
+  NOT_FOUND: 404,
+  BAD_REQUEST: 400,
+  SERVER_ERROR_FIRST: 500,
+  SERVER_ERROR_LAST: 509
 };
+
+export const CONNECTION_ERROR = `Network Error`;
 
 export const StartState = {
   STAR_RATING: null,

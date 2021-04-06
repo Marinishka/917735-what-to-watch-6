@@ -1,12 +1,17 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import {Routes} from '../../const';
+import {Link, Redirect} from 'react-router-dom';
+import {AuthorizationStatus, Routes} from '../../const';
 import {resetGenre} from '../../store/action';
 import SignInForm from '../sign-in-form/sign-in-form';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 const SignIn = () => {
   const dispatch = useDispatch();
+  const authorisationStatus = useSelector((state) => state.USER.authorisationStatus);
+
+  if (authorisationStatus === AuthorizationStatus.AUTH) {
+    return <Redirect to={Routes.MAIN}/>;
+  }
 
   return <div className="user-page">
     <header className="page-header user-page__head">

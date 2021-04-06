@@ -26,7 +26,9 @@ MovieReview.propTypes = {
     comment: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     rating: PropTypes.number.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.shape({
+      name: PropTypes.string.isRequired
+    }).isRequired
   }).isRequired
 };
 

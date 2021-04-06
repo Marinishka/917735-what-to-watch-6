@@ -12,11 +12,21 @@ import UserElement from '../user-element/user-element';
 const MyList = () => {
   const dispatch = useDispatch((state) => state.USER);
 
-  const [films, isLoading] = useAPI(`/favorite`);
+  const [films, isLoading, error] = useAPI(`/favorite`);
 
   if (isLoading) {
     return <Loading></Loading>;
   }
+
+  const getMyList = () => {
+    return films.length !== 0
+      ? <MoviesList films={adaptFilmsToClient(films)} quantity={films.length}/>
+      : <div>Your list is empty. Add your first movie</div>;
+  };
+
+  const getError = () => {
+    return <div>{error}</div>;
+  };
 
   return <div className="user-page">
     <header className="page-header user-page__head">
@@ -37,9 +47,9 @@ const MyList = () => {
 
     <section className="catalog">
       <h2 className="catalog__title visually-hidden">Catalog</h2>
-      {films.length !== 0
-        ? <MoviesList films={adaptFilmsToClient(films)} quantity={films.length}/>
-        : <div>Your list is empty. Add your first movie</div>}
+      {error === null
+        ? getMyList()
+        : getError()}
 
     </section>
 

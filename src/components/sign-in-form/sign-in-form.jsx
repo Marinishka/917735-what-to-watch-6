@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {login} from '../../store/api-actions';
 import {useDispatch} from 'react-redux';
+import {CONNECTION_ERROR, INITIAL_GENRE, StatusCodes} from '../../const';
+import {changeGenre} from '../../store/action';
 
 const SignInForm = () => {
   const dispatch = useDispatch();
@@ -27,12 +29,25 @@ const SignInForm = () => {
       setError(`Please enter a valid email address`);
       return;
     }
+
     setError(null);
     setDisabled(true);
+    dispatch(changeGenre(INITIAL_GENRE));
     dispatch(login({email, password}))
-    .catch(() => {
+    .catch((err) => {
+      getResponseErrorMessage(err);
       setDisabled(false);
     });
+  };
+
+  const getResponseErrorMessage = (err) => {
+    if (err.message === CONNECTION_ERROR) {
+      setError(`Internet connection error. Check the connection.`);
+    } else if (err === StatusCodes.BAD_REQUEST) {
+      setError(`We can’t recognize this email and password combination. Please try again.`);
+    } else if (err >= StatusCodes.SERVER_ERROR_FIRST && err <= StatusCodes.SERVER_ERROR_LAST) {
+      setError(`We have something broken on server. Try again later.`);
+    }
   };
 
   const getErrorMessage = () => {

@@ -13,23 +13,32 @@ const getListReview = (reviews) => {
 };
 
 const MovieReviews = ({id}) => {
-  const [reviews, isLoading] = useAPI(`/comments/${id}`);
+  const [reviews, isLoading, error] = useAPI(`/comments/${id}`);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  const reviewList = getListReview(reviews);
+  const getReviews = () => {
+    const reviewList = getListReview(reviews);
+    return reviews.length !== 0
+      ? <div className="movie-card__reviews movie-card__row">
+        {reviewList.map((reviews2, i) =>
+          (<div key={`row-${i}`} className="movie-card__reviews-col">
+            {reviews2.map((rev) => <MovieReview key={`review-${rev.id}`} review={rev}></MovieReview>)}
+          </div>)
+        )}
+      </div>
+      : <p className="review__text">There are no reviews for this film yet. You can be the first.</p>;
+  };
 
-  return reviews.length !== 0
-    ? <div className="movie-card__reviews movie-card__row">
-      {reviewList.map((reviews2, i) =>
-        (<div key={`row-${i}`} className="movie-card__reviews-col">
-          {reviews2.map((rev) => <MovieReview key={`review-${rev.id}`} review={rev}></MovieReview>)}
-        </div>)
-      )}
-    </div>
-    : <p className="review__text">There are no reviews for this film yet. You can be the first.</p>;
+  const getErrorMessage = () => {
+    return <p className="review__text">{error}</p>;
+  };
+
+  return error === null
+    ? getReviews()
+    : getErrorMessage();
 };
 
 MovieReviews.propTypes = {

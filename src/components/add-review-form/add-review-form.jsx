@@ -1,7 +1,7 @@
 import React, {Fragment, useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {postReview} from '../../store/api-actions';
-import {STARS_QUANTITY, StartState, TextLenghtValid} from '../../const';
+import {CONNECTION_ERROR, STARS_QUANTITY, StartState, StatusCodes, TextLenghtValid} from '../../const';
 import {useHistory} from 'react-router-dom';
 
 const AddReviewForm = () => {
@@ -16,18 +16,15 @@ const AddReviewForm = () => {
 
   const history = useHistory();
 
-  const [statusForm, setStatusForm] = useState({
-    isDisabled: true,
-    isError: false
-  });
+  const [isDisabled, setDisabled] = useState(true);
+
+  const [error, setError] = useState(false);
 
   const [starRating, setStarRating] = useState(StartState.STAR_RATING);
   const [reviewText, setReviewText] = useState(StartState.REVIEW_TEXT);
 
   useEffect(() => {
-    setStatusForm({
-      ...statusForm,
-      isDisabled: !isDataValid()});
+    setDisabled(!isDataValid());
   }, [starRating, reviewText]);
 
   const isTextareaValid = () => {
@@ -45,9 +42,9 @@ const AddReviewForm = () => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    setStatusForm({
-      isDisabled: true,
-      isError: false});
+    setDisabled(true);
+    setError(false);
+
     onSubmit({
       id,
       starRating,
@@ -56,11 +53,20 @@ const AddReviewForm = () => {
     .then(() => {
       history.push(`/films/${id}`);
     })
-    .catch(() => {
-      setStatusForm({
-        isDisabled: false,
-        isError: true});
+    .catch((err) => {
+      getResponseErrorMessage(err);
+      setDisabled(false);
     });
+  };
+
+  const getResponseErrorMessage = (err) => {
+    if (err.message === CONNECTION_ERROR) {
+      setError(`Internet connection error. We have not submitted your review. Check the connection.`);
+    } else if (err.response.status === StatusCodes.BAD_REQUEST) {
+      setError(`We didn't like your review. Take it back.`);
+    } else if (err.response.status >= StatusCodes.SERVER_ERROR_FIRST && err.response.status <= StatusCodes.SERVER_ERROR_LAST) {
+      setError(`We have something broken on server. Your review has not been sent. Try to repeat later.`);
+    }
   };
 
   return <form action="#" className="add-review__form" onSubmit={handleSubmit}>
@@ -85,11 +91,11 @@ const AddReviewForm = () => {
         setReviewText(target.value);
       }}/>
       <div className="add-review__submit">
-        <button className="add-review__btn" type="submit" disabled={statusForm.isDisabled}>Post</button>
+        <button className="add-review__btn" type="submit" disabled={isDisabled}>Post</button>
       </div>
 
     </div>
-    {statusForm.isError ? <div>We have not submitted your review. Try to repeat</div> : ``}
+    {error ? <div>{error}</div> : ``}
   </form>;
 };
 

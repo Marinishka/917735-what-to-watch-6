@@ -25,7 +25,8 @@ export const checkAuth = () => (dispatch, _getState, api) => (
 
 export const login = ({email, password}) => (dispatch, _getState, api) => (
   api.post(APIRoutes.LOGIN, {email, password})
-    .then(() => dispatch(requireAuthorization(AuthorizationStatus.AUTH))).then(() => dispatch(redirectToRoute(Routes.MAIN)))
+    .then(() => dispatch(requireAuthorization(AuthorizationStatus.AUTH)))
+    .then(() => dispatch(redirectToRoute(Routes.MAIN)))
 );
 
 export const logout = () => (dispatch, _getState, api) => {
@@ -34,7 +35,7 @@ export const logout = () => (dispatch, _getState, api) => {
   .catch(() => {});
 };
 
-export const postReview = ({id, starRating: rating, reviewText: comment}) => (dispatch, _getState, api) => (
+export const postReview = ({id, starRating: rating, reviewText: comment}) => (_, _getState, api) => (
   api.post(`${APIRoutes.COMMENTS}/${id}`, {rating, comment})
 );
 
