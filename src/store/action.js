@@ -10,8 +10,15 @@ export const ActionType = {
   LOAD_PREVIEW_FILM: `data/loadPreviewFilm`,
   RESET_GENRE: `localState/resetGenre`,
   LOAD_ACTIVE_FILM: `localState/loadActiveFilm`,
-  UPDATE_FILM: `data/updateFilm`
+  UPDATE_FILM: `data/updateFilm`,
+  CATCH_ERROR: `localState/catchError`
 };
+
+export const catchError = createAction(ActionType.CATCH_ERROR, (error) => {
+  return {
+    payload: error
+  };
+});
 
 export const changeGenre = createAction(ActionType.CHANGE_GENRE, (genre = INITIAL_GENRE) => {
   return {

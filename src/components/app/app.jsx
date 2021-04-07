@@ -10,6 +10,7 @@ import {Switch, Route, Router as BrowserRouter} from 'react-router-dom';
 import {Routes} from '../../const';
 import PrivateRoute from '../private-route/private-route';
 import browserHistory from '../../browser-history';
+import ErrorPage from '../error-page/error-page';
 
 const App = () => {
   return (
@@ -39,8 +40,11 @@ const App = () => {
         <Route path={Routes.PLAYER} exact render={() => {
           return <Player/>;
         }}/>
-        <Route>
-          <NotFound path={Routes.NOT_FOUND}/>
+        <Route path={Routes.NOT_FOUND} exact>
+          <NotFound />
+        </Route>
+        <Route path={`/error`} exact>
+          <ErrorPage />
         </Route>
       </Switch>
     </BrowserRouter>

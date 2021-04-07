@@ -54,7 +54,8 @@ export const Routes = {
   MOVIE_PAGE: `/films/:id?`,
   ADD_REVIEW: `/films/:id/review`,
   PLAYER: `/player/:id?`,
-  NOT_FOUND: `/not_found`
+  NOT_FOUND: `/not_found`,
+  ERROR: `/error`
 };
 
 export const AuthorizationStatus = {

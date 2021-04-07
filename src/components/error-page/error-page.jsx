@@ -1,12 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import {resetGenre} from '../../store/action';
-import {Routes} from '../../const';
-import {useDispatch} from 'react-redux';
+import {redirectToRoute, resetGenre} from '../../store/action';
+import {Routes, StatusCodes} from '../../const';
+import {useDispatch, useSelector} from 'react-redux';
 
-const ErrorPage = ({message}) => {
+const ErrorPage = () => {
   const dispatch = useDispatch();
+
+  const error = useSelector((state) => state.LOCAL.error);
+
+  const getResponseErrorMessage = () => {
+    let message = `We don't know what happened`;
+    if (error === null) {
+      dispatch(redirectToRoute(Routes.MAIN));
+    } else if (error === undefined) {
+      message = `Internet connection error. Check the connection.`;
+    } else if (error.status === StatusCodes.BAD_REQUEST) {
+      message = `Invalid request sent`;
+    } else if (error.status >= StatusCodes.SERVER_ERROR_FIRST && error.status <= StatusCodes.SERVER_ERROR_LAST) {
+      message = `We have something broken on server. Films has not been loaded. Try again later.`;
+    } else if (error.status === StatusCodes.NOT_FOUND) {
+      history.push(Routes.NOT_FOUND);
+    }
+    return message;
+  };
 
   return <div className="user-page">
     <h1 className="visually-hidden">WTW</h1>
@@ -19,7 +37,7 @@ const ErrorPage = ({message}) => {
         </Link>
       </div>
     </header>
-    <h1 className="page-title user-page__title">{message}</h1>
+    <h1 className="page-title user-page__title">{getResponseErrorMessage()}</h1>
     <Link to={Routes.MAIN} className="logo__link logo__link--light" style={{width: `auto`, height: `auto`, padding: `10px 20px`}} onClick={() => (dispatch(resetGenre()))}>Back to main</Link>
   </div>;
 };

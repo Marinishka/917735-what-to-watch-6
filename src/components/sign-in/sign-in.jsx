@@ -7,9 +7,8 @@ import {useDispatch, useSelector} from 'react-redux';
 
 const SignIn = () => {
   const dispatch = useDispatch();
-  const authorisationStatus = useSelector((state) => state.USER.authorisationStatus);
-
-  if (authorisationStatus === AuthorizationStatus.AUTH) {
+  const authorizationStatus = useSelector((state) => state.USER.authorizationStatus);
+  if (authorizationStatus === AuthorizationStatus.AUTH) {
     return <Redirect to={Routes.MAIN}/>;
   }
 

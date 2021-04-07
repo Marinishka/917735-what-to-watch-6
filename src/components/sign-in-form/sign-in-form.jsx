@@ -43,9 +43,9 @@ const SignInForm = () => {
   const getResponseErrorMessage = (err) => {
     if (err.message === CONNECTION_ERROR) {
       setError(`Internet connection error. Check the connection.`);
-    } else if (err === StatusCodes.BAD_REQUEST) {
+    } else if (err.response.status === StatusCodes.BAD_REQUEST) {
       setError(`We can’t recognize this email and password combination. Please try again.`);
-    } else if (err >= StatusCodes.SERVER_ERROR_FIRST && err <= StatusCodes.SERVER_ERROR_LAST) {
+    } else if (err.response.status >= StatusCodes.SERVER_ERROR_FIRST && err.response.status <= StatusCodes.SERVER_ERROR_LAST) {
       setError(`We have something broken on server. Try again later.`);
     }
   };

@@ -4,48 +4,23 @@ import PreviewFilmCard from '../preview-film-card/preview-film-card';
 import Catalog from '../catalog/catalog';
 import {fetchFilmList, fetchPreviewFilm} from '../../store/api-actions';
 import {useSelector, useDispatch} from 'react-redux';
-import ErrorPage from '../error-page/error-page';
-import {CONNECTION_ERROR, Routes, StatusCodes} from '../../const';
-import {useHistory} from 'react-router';
+import ErrorMessage from '../error-message/error-message';
+import {catchError, redirectToRoute} from '../../store/action';
+import {Routes} from '../../const';
 
 const Main = () => {
   const isFilmsLoaded = useSelector((state) => state.DATA.isFilmsLoaded);
   const isPreviewFilmLoaded = useSelector((state) => state.DATA.isPreviewFilmLoaded);
   const dispatch = useDispatch();
-  const history = useHistory();
-
-  const getResponseErrorMessage = (err) => {
-    let message = `We don't know what happened`;
-    if (err.message === CONNECTION_ERROR) {
-      message = `Internet connection error. Check the connection.`;
-    } else if (err.response.status === StatusCodes.BAD_REQUEST) {
-      message = `Invalid request sent`;
-    } else if (err.response.status >= StatusCodes.SERVER_ERROR_FIRST && err.response.status <= StatusCodes.SERVER_ERROR_LAST) {
-      message = `We have something broken on server. Films has not been loaded. Try again later.`;
-    } else if (err.response.status === StatusCodes.NOT_FOUND) {
-      history.push(Routes.NOT_FOUND);
-    }
-    return message;
-  };
 
   useEffect(() => {
-    if (!isFilmsLoaded) {
-      dispatch(fetchFilmList())
-      .catch((err) => {
-        return <ErrorPage message={getResponseErrorMessage(err)}/>;
-      });
-    }
-  }, [isFilmsLoaded]);
-
-  useEffect(() => {
-    if (!isPreviewFilmLoaded) {
-      dispatch(fetchPreviewFilm())
-      .catch((err) => {
-        return <ErrorPage message={getResponseErrorMessage(err)}/>;
-      });
-    }
-  }, [isPreviewFilmLoaded]);
-
+    dispatch(catchError(null));
+    Promise.all([dispatch(fetchFilmList()), dispatch(fetchPreviewFilm())])
+    .catch((err) => {
+      dispatch(catchError(err.response));
+      dispatch(redirectToRoute(Routes.ERROR));
+    });
+  });
 
   if (!isFilmsLoaded || !isPreviewFilmLoaded) {
     return (
@@ -54,6 +29,7 @@ const Main = () => {
   }
 
   return <>
+    <ErrorMessage/>
     <PreviewFilmCard/>
     <div className="page-content">
       <Catalog/>
