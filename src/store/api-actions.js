@@ -1,5 +1,5 @@
 import {loadFilms, loadPreviewFilm, requireAuthorization, redirectToRoute, changeActiveFilm, catchError} from './action';
-import {APIRoutes, AuthorizationStatus, Routes} from '../const';
+import {APIRoutes, AuthorizationStatus, Routes, StatusCodes} from '../const';
 import {adaptFilmsToClient, adaptFilmToClient} from '../utils/common';
 
 export const fetchFilmList = () => (dispatch, _getState, api) => (
@@ -26,6 +26,12 @@ export const checkAuth = () => (dispatch, _getState, api) => (
   api.get(APIRoutes.LOGIN)
     .then(() => dispatch(requireAuthorization(AuthorizationStatus.AUTH)))
     .catch((err) => {
+      const {response} = err;
+
+      if (response.status === StatusCodes.UNAUTHORIZED) {
+        return;
+      }
+
       dispatch(catchError(err.response));
       dispatch(redirectToRoute(Routes.ERROR));
     })

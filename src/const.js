@@ -17,7 +17,8 @@ export const StatusCodes = {
   NOT_FOUND: 404,
   BAD_REQUEST: 400,
   SERVER_ERROR_FIRST: 500,
-  SERVER_ERROR_LAST: 509
+  SERVER_ERROR_LAST: 509,
+  UNAUTHORIZED: 401
 };
 
 export const CONNECTION_ERROR = `Network Error`;
