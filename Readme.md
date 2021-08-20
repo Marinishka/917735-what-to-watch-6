@@ -1,5 +1,7 @@
 # Личный проект «Что посмотреть» [![Build status][travis-image]][travis-url]
 
+[Техническое задание](https://github.com/Marinishka/917735-what-to-watch-6/blob/master/Technical%20task.md).
+
 * Студент: [Марина Шиповалова](https://up.htmlacademy.ru/react/6/user/917735).
 * Наставник: [`Сергей Шершнев`](https://htmlacademy.ru/profile/shv_sergey).
 
